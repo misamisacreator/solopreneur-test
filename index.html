@@ -7,27 +7,21 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* 引入思源宋体 (Noto Serif SC) 用于营造专业咨询感 */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&display=swap');
 
-        /* 全局字体设定 */
         body { 
             font-family: 'Noto Serif SC', 'Songti SC', serif; 
             background-color: #f8fafc; 
             color: #334155; 
+            -webkit-font-smoothing: antialiased;
         }
-        
-        /* 专用无衬线体类 (用于按钮、标签、图表、数字) */
         .font-sans-ui { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; }
-
-        /* 动画定义 */
+        
         .fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         .slide-up { animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
-        
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 按钮样式 */
         .btn-primary { 
             background: linear-gradient(135deg, #1e3a8a 0%, #172554 100%); 
             color: white; 
@@ -37,33 +31,27 @@
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(30, 58, 138, 0.25); }
         .btn-primary:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; box-shadow: none; }
         
-        /* 选项卡片 */
         .option-card { transition: all 0.2s; cursor: pointer; border: 1px solid #e2e8f0; }
         .option-card:hover { background-color: #f8fafc; border-color: #94a3b8; transform: translateX(4px); }
         .option-card.selected { border-color: #1e3a8a; background-color: #eff6ff; color: #1e3a8a; font-weight: 700; ring: 1px solid #1e3a8a; transform: translateX(4px); }
 
-        /* 隐藏滚动条 */
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* 打印优化 */
-        @media print {
-            body { background-color: white; }
-            .no-print { display: none !important; }
-            #resultPage { position: static; overflow: visible; height: auto; }
-            .print-break-inside { break-inside: avoid; }
-            .shadow-2xl { box-shadow: none !important; }
-            .border { border: 1px solid #ddd !important; }
-        }
+        /* 快照模式专用样式 */
+        body.snapshot-mode { background-color: white !important; }
+        body.snapshot-mode .no-snapshot { display: none !important; }
+        body.snapshot-mode #resultPage { position: static; overflow: visible; height: auto; border: none; box-shadow: none; }
+        body.snapshot-mode .snapshot-footer { display: block !important; }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 md:p-6 bg-slate-50">
 
     <!-- 主容器 -->
-    <div class="w-full max-w-2xl bg-white rounded-[2rem] shadow-2xl overflow-hidden min-h-[850px] flex flex-col border border-slate-100 relative">
+    <div id="mainContainer" class="w-full max-w-2xl bg-white rounded-[2rem] shadow-2xl overflow-hidden min-h-[850px] flex flex-col border border-slate-100 relative transition-all duration-300">
         
         <!-- 顶部进度条 -->
-        <div id="progressBarContainer" class="hidden w-full h-1 bg-slate-100 absolute top-0 left-0 z-20">
+        <div id="progressBarContainer" class="hidden w-full h-1 bg-slate-100 absolute top-0 left-0 z-20 no-snapshot">
             <div id="progressBar" class="h-full bg-indigo-900 transition-all duration-500 ease-out" style="width: 0%"></div>
         </div>
 
@@ -75,8 +63,6 @@
                     🧬
                 </div>
                 <h1 class="text-3xl md:text-4xl font-black text-indigo-950 mb-4 tracking-tight">一人公司 · 商业体质诊断</h1>
-                
-                <!-- 修改点3：封面 Slogan 优化 -->
                 <p class="text-slate-500 mb-12 text-lg font-medium italic">“从生存到系统，找到阻碍你收入跃迁的那个卡点”</p>
                 
                 <div class="bg-slate-50 p-8 rounded-2xl text-left text-slate-600 mb-10 w-full max-w-md border border-slate-100">
@@ -84,24 +70,11 @@
                     <ul class="space-y-4 font-sans-ui text-sm">
                         <li class="flex items-start gap-3">
                             <span class="text-base mt-0.5">🏗️</span> 
-                            <div>
-                                <strong class="text-slate-800">全维扫描</strong>
-                                <p class="text-slate-500 mt-0.5">包含「生存状态扫描」与「核心能力体检」两部分。</p>
-                            </div>
+                            <div><strong class="text-slate-800">全维扫描</strong><p class="text-slate-500 mt-0.5">包含「生存状态扫描」与「核心能力体检」两部分。</p></div>
                         </li>
                         <li class="flex items-start gap-3">
                             <span class="text-base mt-0.5">🧠</span> 
-                            <div>
-                                <strong class="text-slate-800">智能适配</strong>
-                                <p class="text-slate-500 mt-0.5">系统会根据你的生存阶段，自动适配评分逻辑，确保诊断精准。</p>
-                            </div>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-base mt-0.5">❤️</span> 
-                            <div>
-                                <strong class="text-slate-800">诚实原则</strong>
-                                <p class="text-slate-500 mt-0.5">请根据当前真实业务现状作答，而非“未来计划”。</p>
-                            </div>
+                            <div><strong class="text-slate-800">智能适配</strong><p class="text-slate-500 mt-0.5">系统会根据你的生存阶段，自动适配评分逻辑，确保诊断精准。</p></div>
                         </li>
                     </ul>
                 </div>
@@ -120,52 +93,37 @@
                     </div>
                     <h2 id="questionText" class="text-2xl md:text-3xl font-bold text-indigo-950 leading-snug min-h-[6rem] flex items-center">...</h2>
                 </div>
-
-                <div id="optionsBox" class="flex-1 space-y-3 overflow-y-auto pb-6 pr-1 scrollbar-hide font-sans-ui">
-                    <!-- 选项动态渲染 -->
-                </div>
-
+                <div id="optionsBox" class="flex-1 space-y-3 overflow-y-auto pb-6 pr-1 scrollbar-hide font-sans-ui"></div>
                 <div class="mt-auto pt-6 border-t border-slate-50 flex justify-between items-center font-sans-ui">
                     <button onclick="prevQuestion()" id="prevBtn" class="text-slate-400 hover:text-slate-600 text-xs font-bold px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors hidden">← 上一题</button>
                     <button onclick="nextQuestion()" id="nextBtn" disabled class="btn-primary py-3 px-10 rounded-xl font-bold text-sm ml-auto shadow-lg">下一题</button>
                 </div>
             </div>
 
-            <!-- 2.5 中途插页：生存模式锁定提示 -->
+            <!-- 2.5 中途插页 -->
             <div id="interstitialPage" class="hidden flex-col justify-center items-center h-full p-8 text-center fade-in bg-slate-50">
-                <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 text-4xl shadow-md border border-slate-100">
-                    🔒
-                </div>
+                <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 text-4xl shadow-md border border-slate-100">🔒</div>
                 <h3 class="text-2xl font-bold text-indigo-950 mb-4">已开启「0-1 聚焦模式」</h3>
-                
-                <!-- 修改点1：聚焦模式文案优化 -->
                 <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 max-w-sm text-left mb-8">
                     <p class="text-sm text-slate-600 leading-relaxed text-justify">
-                        为了确保诊断精准，本次测评将<strong>暂不涉及</strong>「系统力」与「交付力」等扩张期维度。
-                        <br><br>
+                        为了确保诊断精准，本次测评将<strong>暂不涉及</strong>「系统力」与「交付力」等扩张期维度。<br><br>
                         请放心，当你跑通最小闭环（MVP）并实现稳定盈利后，再次测评即可自动解锁全维视角，本次我们共同聚焦当下最关键的破局点。
                     </p>
                 </div>
-                
-                <button onclick="resumeQuiz()" class="btn-primary py-3 px-12 rounded-xl font-bold text-sm shadow-lg font-sans-ui">
-                    我明白了，继续答题
-                </button>
+                <button onclick="resumeQuiz()" class="btn-primary py-3 px-12 rounded-xl font-bold text-sm shadow-lg font-sans-ui">我明白了，继续答题</button>
             </div>
 
             <!-- 3. 结果页 -->
             <div id="resultPage" class="hidden absolute inset-0 bg-white z-30 overflow-y-auto flex-col slide-up">
                 
                 <!-- 头部卡片 -->
-                <div class="bg-[#0f172a] text-white p-8 md:p-10 relative overflow-hidden shrink-0 print-break-inside">
-                    <!-- 装饰背景 -->
+                <div class="bg-[#0f172a] text-white p-8 md:p-10 relative overflow-hidden shrink-0">
                     <div class="absolute top-0 right-0 w-80 h-80 bg-indigo-600 rounded-full blur-[100px] opacity-20 translate-x-20 -translate-y-20"></div>
                     <div class="absolute bottom-0 left-0 w-60 h-60 bg-teal-600 rounded-full blur-[80px] opacity-10 -translate-x-10 translate-y-10"></div>
                     
                     <div class="relative z-10 pt-6">
                         <div class="flex justify-between items-start mb-8">
                             <div class="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold border border-slate-700 px-3 py-1.5 rounded-full bg-slate-800/50 font-sans-ui">当前商业画像</div>
-                            
-                            <!-- 修改点2：分数视觉层级优化 -->
                             <div class="text-right">
                                 <div class="flex items-baseline justify-end gap-1 font-sans-ui">
                                     <span class="text-6xl font-black text-white tracking-tighter" id="userScoreVal">0</span>
@@ -174,16 +132,14 @@
                                 <div class="text-[10px] text-slate-400 font-medium font-sans-ui mt-1">商业健康总分</div>
                             </div>
                         </div>
-                        
                         <h2 id="resultTitle" class="text-4xl md:text-5xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 tracking-tight">...</h2>
                         <p id="resultDesc" class="text-sm md:text-base text-slate-300 max-w-lg leading-relaxed opacity-90 font-light italic border-l-2 border-indigo-500 pl-4">...</p>
                     </div>
                 </div>
 
                 <div class="p-6 md:p-10 space-y-12 pb-24">
-                    
                     <!-- 1. 核心图表 -->
-                    <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm print-break-inside">
+                    <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm">
                         <h3 class="font-bold text-slate-400 text-xs uppercase tracking-widest mb-6 text-center font-sans-ui">一人公司 · 六维能力雷达</h3>
                         <div class="h-64 w-full relative flex justify-center">
                             <canvas id="radarChart"></canvas>
@@ -191,71 +147,46 @@
                     </div>
 
                     <!-- 2. 维度得分详情 -->
-                    <div class="print-break-inside">
-                        <h3 class="font-bold text-slate-900 text-sm mb-6 flex items-center gap-2 uppercase tracking-wide font-sans-ui">
-                            <span class="text-lg">📊</span> 六维能力模型得分
-                        </h3>
-                        <div id="scoreCards" class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                            <!-- 动态插入设计感卡片 -->
-                        </div>
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-sm mb-6 flex items-center gap-2 uppercase tracking-wide font-sans-ui"><span class="text-lg">📊</span> 六维能力模型得分</h3>
+                        <div id="scoreCards" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
                     </div>
 
                     <!-- 3. 深度诊断分析 -->
-                    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-8 print-break-inside">
-                        <h3 class="font-bold text-slate-900 text-sm mb-6 flex items-center gap-2 uppercase tracking-wide font-sans-ui">
-                            <span class="text-lg">🩺</span> 深度诊断分析
-                        </h3>
-                        <div id="diagnosisText" class="text-sm text-slate-700 leading-8 space-y-6 text-justify">
-                            <!-- 动态插入 -->
-                        </div>
+                    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-8">
+                        <h3 class="font-bold text-slate-900 text-sm mb-6 flex items-center gap-2 uppercase tracking-wide font-sans-ui"><span class="text-lg">🩺</span> 深度诊断分析</h3>
+                        <div id="diagnosisText" class="text-sm text-slate-700 leading-8 space-y-6 text-justify"></div>
                     </div>
 
                     <!-- 4. 关键行动 -->
-                    <div class="bg-[#f0f9ff] border border-sky-100 rounded-2xl p-8 relative overflow-hidden print-break-inside">
+                    <div class="bg-[#f0f9ff] border border-sky-100 rounded-2xl p-8 relative overflow-hidden">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-sky-200 rounded-full blur-3xl opacity-30"></div>
-                        <h3 class="font-bold text-sky-900 text-sm mb-6 flex items-center gap-2 uppercase tracking-wide relative z-10 font-sans-ui">
-                            <span class="w-1.5 h-4 bg-sky-600 rounded-full"></span> 下一步关键行动
-                        </h3>
-                        <div id="actionPlan" class="space-y-6 relative z-10">
-                            <!-- 动态插入 -->
-                        </div>
+                        <h3 class="font-bold text-sky-900 text-sm mb-6 flex items-center gap-2 uppercase tracking-wide relative z-10 font-sans-ui"><span class="w-1.5 h-4 bg-sky-600 rounded-full"></span> 下一步关键行动</h3>
+                        <div id="actionPlan" class="space-y-6 relative z-10"></div>
                     </div>
 
                     <!-- 5. 商业体质定义 -->
-                    <div class="border-t border-slate-100 pt-10 print-break-inside">
+                    <div class="border-t border-slate-100 pt-10">
                         <h3 class="font-bold text-slate-400 text-xs uppercase tracking-widest mb-6 font-sans-ui">附录：一人公司 · 六维增长模型定义</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
-                            <div>
-                                <strong class="text-sm text-slate-900 block mb-1">1. 定位力</strong>
-                                <p class="text-xs text-slate-500 leading-relaxed font-sans-ui">你在市场生态中的生态位。决定了你是谁，服务谁，以及你能切走多大的蛋糕。</p>
-                            </div>
-                            <div>
-                                <strong class="text-sm text-slate-900 block mb-1">2. 产品力</strong>
-                                <p class="text-xs text-slate-500 leading-relaxed font-sans-ui">你交付价值的载体。不仅指产品本身，还包括定价结构和解决方案的完整性。</p>
-                            </div>
-                            <div>
-                                <strong class="text-sm text-slate-900 block mb-1">3. 吸引力</strong>
-                                <p class="text-xs text-slate-500 leading-relaxed font-sans-ui">让陌生人发现你的能力。即流量获取、内容传播和品牌曝光的效率。</p>
-                            </div>
-                            <div>
-                                <strong class="text-sm text-slate-900 block mb-1">4. 转化力</strong>
-                                <p class="text-xs text-slate-500 leading-relaxed font-sans-ui">让流量变成现金的能力。涉及信任建立、销售话术和临门一脚的成交设计。</p>
-                            </div>
-                            <div>
-                                <strong class="text-sm text-slate-900 block mb-1">5. 交付力</strong>
-                                <p class="text-xs text-slate-500 leading-relaxed font-sans-ui">兑现承诺并制造惊喜的能力。决定了口碑、复购和客户生命周期价值。</p>
-                            </div>
-                            <div>
-                                <strong class="text-sm text-slate-900 block mb-1">6. 系统力</strong>
-                                <p class="text-xs text-slate-500 leading-relaxed font-sans-ui">让业务脱离你个人时间运转的能力。包括流程SOP、工具自动化和财务健康度。</p>
-                            </div>
+                            <div><strong class="text-sm text-slate-900 block mb-1">1. 定位力</strong><p class="text-xs text-slate-500 leading-relaxed font-sans-ui">你在市场生态中的生态位。决定了你是谁，服务谁，以及你能切走多大的蛋糕。</p></div>
+                            <div><strong class="text-sm text-slate-900 block mb-1">2. 产品力</strong><p class="text-xs text-slate-500 leading-relaxed font-sans-ui">你交付价值的载体。不仅指产品本身，还包括定价结构和解决方案的完整性。</p></div>
+                            <div><strong class="text-sm text-slate-900 block mb-1">3. 吸引力</strong><p class="text-xs text-slate-500 leading-relaxed font-sans-ui">让陌生人发现你的能力。即流量获取、内容传播和品牌曝光的效率。</p></div>
+                            <div><strong class="text-sm text-slate-900 block mb-1">4. 转化力</strong><p class="text-xs text-slate-500 leading-relaxed font-sans-ui">让流量变成现金的能力。涉及信任建立、销售话术和临门一脚的成交设计。</p></div>
+                            <div><strong class="text-sm text-slate-900 block mb-1">5. 交付力</strong><p class="text-xs text-slate-500 leading-relaxed font-sans-ui">兑现承诺并制造惊喜的能力。决定了口碑、复购和客户生命周期价值。</p></div>
+                            <div><strong class="text-sm text-slate-900 block mb-1">6. 系统力</strong><p class="text-xs text-slate-500 leading-relaxed font-sans-ui">让业务脱离你个人时间运转的能力。包括流程SOP、工具自动化和财务健康度。</p></div>
                         </div>
                     </div>
 
-                    <!-- 底部操作 -->
-                    <div class="flex flex-col gap-3 pt-8 border-t border-slate-100 no-print font-sans-ui mt-8">
-                        <button onclick="window.print()" class="w-full py-4 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 text-sm transition-colors shadow-lg flex items-center justify-center gap-2">
-                            <span>📥</span> 保存诊断画像 (PDF/图片)
+                    <!-- 底部 Footer (仅截图模式显示) -->
+                    <div class="snapshot-footer hidden text-center pt-8 pb-4 border-t border-slate-100 mt-8">
+                        <p class="text-xs text-slate-400 font-sans-ui tracking-widest uppercase">Generated by 一人公司商业体质诊断</p>
+                    </div>
+
+                    <!-- 底部操作 (截图模式隐藏) -->
+                    <div class="flex flex-col gap-3 pt-8 border-t border-slate-100 no-snapshot font-sans-ui mt-8">
+                        <button onclick="toggleSnapshotMode()" class="w-full py-4 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 text-sm transition-colors shadow-lg flex items-center justify-center gap-2">
+                            <span>📸</span> 生成诊断卡片 (保存图片)
                         </button>
                         <button onclick="location.reload()" class="w-full py-3 text-slate-400 font-bold rounded-xl hover:text-slate-600 text-xs transition-colors">
                             重新测试
@@ -263,7 +194,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -276,10 +206,19 @@
         </div>
     </div>
 
+    <!-- 5. 截图引导遮罩 -->
+    <div id="snapshotOverlay" onclick="exitSnapshotMode()" class="fixed inset-0 z-[60] hidden bg-slate-900/80 backdrop-blur-sm flex-col items-center justify-center text-white cursor-pointer font-sans-ui fade-in">
+        <div class="bg-white/10 p-6 rounded-2xl border border-white/20 text-center max-w-xs mx-6">
+            <div class="text-4xl mb-4">📱</div>
+            <h3 class="text-lg font-bold mb-2">已生成长图模式</h3>
+            <p class="text-sm text-slate-300 mb-6 leading-relaxed">请直接使用手机的<br><strong class="text-white">「截屏」或「滚动截屏」</strong>功能保存结果。</p>
+            <div class="py-2 px-6 bg-white text-slate-900 rounded-full text-xs font-bold inline-block">点击任意处退出</div>
+        </div>
+    </div>
+
     <script>
-        // --- 数据配置 ---
+        // --- 数据配置 (保持不变) ---
         const questions = [
-            // --- 第一部分：生存状态扫描 (10题) ---
             { section: "生存扫描", type: "choice", text: "除去工资，你目前的“一人公司/副业”收入状况是？", options: ["几乎没有，还在投入期", "偶尔有，但不稳定", "稳定，但还没超过主业工资", "稳定，且已超过主业工资"] },
             { section: "生存扫描", type: "choice", text: "关于你的“产品/服务”标准化程度？", options: ["还在想卖什么，没定型", "高度定制，每次交付都要重来一遍", "半标准化，有框架但需人工调整", "完全标准化，有SOP或直接卖成品"] },
             { section: "生存扫描", type: "choice", text: "如果停止主动工作一周，你的“业务流”会怎样？", options: ["收入归零，手停口停", "会有积压，回来得疯狂补救", "基本自动运转，影响不大"] },
@@ -290,9 +229,6 @@
             { section: "生存扫描", type: "choice", text: "你每天花在“非核心业务”（如排版、发票、扯皮）上的时间？", options: ["占了一大半，感觉自己像个打杂的", "约30%，有些不得不做", "很少，都外包或用工具解决了"] },
             { section: "生存扫描", type: "choice", text: "如果你的赛道突然涌入一批低价竞争者，你会？", options: ["很慌，只能跟着降价", "有点担心，但觉得还能撑一撑", "无所谓，我的壁垒他们抄不走"] },
             { section: "生存扫描", type: "choice", text: "你做“一人公司”的终极目标是？", options: ["赚点零花钱，帮补家用", "取代上班，通过自由职业养活自己", "做成系统，即使我不干活也有被动收入"] },
-
-            // --- 第二部分：核心能力体检 (40题) ---
-            // 维度一：定位力
             { section: "定位力", type: "scale", dim: 0, text: "我非常清楚我的产品解决了客户的哪个具体痛点，而不是“大概有用”。" },
             { section: "定位力", type: "scale", dim: 0, text: "我能立刻说出 3 个竞争对手，并清楚我比他们强在哪里。" },
             { section: "定位力", type: "scale", dim: 0, text: "我选的赛道，是我即使不赚钱也愿意长期投入的领域。" },
@@ -300,8 +236,6 @@
             { section: "定位力", type: "scale", dim: 0, text: "我有明确的“不服务清单”，对于不合适的客户我会直接拒绝。" },
             { section: "定位力", type: "scale", dim: 0, text: "我非常清楚我的目标客户平时聚集在哪里（哪个平台/社群/线下场景）。" },
             { section: "定位力", type: "scale", dim: 0, text: "我有清晰的“电梯演讲”：能在30秒内向陌生人讲清“我帮谁、解决什么问题、达成什么结果”。" },
-
-            // 维度二：产品力
             { section: "产品力", type: "scale", dim: 1, text: "我有一个低门槛的入门产品（引流款），方便客户低成本试错。" },
             { section: "产品力", type: "scale", dim: 1, text: "我的核心产品有独特的“独家秘方”或方法论，别人很难直接复制。" },
             { section: "产品力", type: "scale", dim: 1, text: "我收集了至少 10 个真实的客户好评/见证，并整理成了素材。" },
@@ -309,8 +243,6 @@
             { section: "产品力", type: "scale", dim: 1, text: "我会定期根据客户反馈迭代产品，而不是一套东西卖万年。" },
             { section: "产品力", type: "scale", dim: 1, text: "我的产品定价结构合理，既有引流款，也有高利润款。" },
             { section: "产品力", type: "scale", dim: 1, text: "我有一个“明星产品”贡献了超过 50% 的收入，而不是什么都卖一点。" },
-
-            // 维度三：吸引力
             { section: "吸引力", type: "scale", dim: 2, text: "我搭建了持续获客的“流量管道”（如持续更新的内容、投放或激励转介绍），而不是坐等客户上门或纯靠运气碰单。" },
             { section: "吸引力", type: "scale", dim: 2, text: "即使我不工作时，互联网上也有内容在持续为我带来曝光。" },
             { section: "吸引力", type: "scale", dim: 2, text: "我清楚哪个渠道的转化率最高，并把精力主要花在那里。" },
@@ -318,8 +250,6 @@
             { section: "吸引力", type: "scale", dim: 2, text: "我发的内容不仅仅是干货，也展示了我的人格魅力和价值观。" },
             { section: "吸引力", type: "scale", dim: 2, text: "我有意识地在构建私域流量池（如微信好友/社群），而不是只在公域裸奔。" },
             { section: "吸引力", type: "scale", dim: 2, text: "我会追踪内容数据（阅读/点赞/转化），知道什么选题有效，而不是凭感觉发。" },
-
-            // 维度四：转化力
             { section: "转化力", type: "scale", dim: 3, text: "我的成交环节没有“人工卡点”，客户不需要问“怎么买”或等我回复，就能直接完成支付/预约。" },
             { section: "转化力", type: "scale", dim: 3, text: "我不害怕谈钱，报价时我内心非常坦荡。" },
             { section: "转化力", type: "scale", dim: 3, text: "面对客户的“太贵了”，我有一套成熟的话术或逻辑去应对。" },
@@ -327,16 +257,12 @@
             { section: "转化力", type: "scale", dim: 3, text: "对于咨询后未成交的客户，我有后续的跟进机制，而不是直接放弃。" },
             { section: "转化力", type: "scale", dim: 3, text: "我有一套筛选机制，能把精力集中在那些真正认可价值的优质客户身上。" },
             { section: "转化力", type: "scale", dim: 3, text: "我会记录并分析客户“不买”的原因，用来优化后续话术。" },
-
-            // 维度五：交付力 (生存模式跳过)
             { section: "交付力", type: "scale", dim: 4, advanced: true, text: "在合作开始前，我会明确告知客户预期的结果和风险，管理好期望值。" },
             { section: "交付力", type: "scale", dim: 4, advanced: true, text: "我经常能给客户提供超出预期的“小惊喜”（超额交付）。" },
             { section: "交付力", type: "scale", dim: 4, advanced: true, text: "面对客户的不满或投诉，我有情绪稳定的处理预案。" },
             { section: "交付力", type: "scale", dim: 4, advanced: true, text: "我的老客户转介绍率很高，很多新单子是朋友推荐的。" },
             { section: "交付力", type: "scale", dim: 4, advanced: true, text: "我有把常见问题（FAQ）整理成文档，避免重复回答同一个问题。" },
             { section: "交付力", type: "scale", dim: 4, advanced: true, text: "我有一套应对突发状况的Plan B，即使生病或断网，业务也能维持最低限度运转。" },
-
-            // 维度六：系统力 (生存模式跳过)
             { section: "系统力", type: "scale", dim: 5, advanced: true, text: "我有极强的“CEO 意识”：我会刻意计算投入产出比（ROI），对于低价值的重复性杂事，我宁愿花钱买时间，也不会为了省钱而亲力亲为。" },
             { section: "系统力", type: "scale", dim: 5, advanced: true, text: "我正在搭建“数字员工”体系：利用 AI 或自动化工具全天候处理业务（如自动发货/数据抓取），实现业务规模与我个人的工作时长解绑。" },
             { section: "系统力", type: "scale", dim: 5, advanced: true, text: "我有健康的作息，不会因为业务繁忙而长期牺牲睡眠或健康。" },
@@ -363,7 +289,6 @@
 
         function renderQuestion() {
             const q = questions[currentIdx];
-            
             const progress = ((currentIdx + 1) / questions.length) * 100;
             document.getElementById('progressBar').style.width = `${progress}%`;
             document.getElementById('currQ').innerText = currentIdx + 1;
@@ -386,7 +311,6 @@
                 wrapper.className = 'flex flex-col gap-2 mt-4';
                 const row = document.createElement('div');
                 row.className = 'flex gap-2';
-                
                 for(let i=1; i<=5; i++) {
                     const btn = document.createElement('button');
                     btn.className = `option-card flex-1 py-5 rounded-xl text-xl font-bold text-slate-300 bg-white ${answers[currentIdx] === i ? 'selected' : 'border-slate-200'}`;
@@ -395,7 +319,6 @@
                     row.appendChild(btn);
                 }
                 wrapper.appendChild(row);
-                
                 const labels = document.createElement('div');
                 labels.className = 'flex justify-between text-[10px] text-slate-400 px-1 mt-1 font-sans-ui';
                 labels.innerHTML = '<span>完全不符</span><span>完全符合</span>';
@@ -468,7 +391,6 @@
                     nextIdx++;
                 }
             }
-
             if (nextIdx < questions.length) {
                 currentIdx = nextIdx;
                 renderQuestion();
@@ -481,16 +403,13 @@
             const modal = document.getElementById('analyzingModal');
             const loadingText = document.getElementById('loadingText');
             modal.classList.remove('hidden');
-            
             const texts = ["正在计算六维能力模型...", "正在比对行业基准数据...", "正在生成关键行动建议..."];
             let i = 0;
-            
             const interval = setInterval(() => {
                 loadingText.innerText = texts[i];
                 i++;
                 if (i >= texts.length) clearInterval(interval);
             }, 600);
-
             setTimeout(() => {
                 modal.classList.add('hidden');
                 showResult();
@@ -508,32 +427,23 @@
         function calculateAndRender() {
             let dimScores = [0,0,0,0,0,0];
             let dimCounts = [0,0,0,0,0,0];
-
             questions.forEach((q, idx) => {
                 if (q.dim !== undefined && answers[idx] !== null) {
                     dimScores[q.dim] += answers[idx];
                     dimCounts[q.dim]++;
                 }
             });
-
             let finalScores = dimScores.map((s, i) => dimCounts[i] ? Math.round((s / dimCounts[i]) * 20) : 0);
-            
             let validDims = isSurvivalMode ? 4 : 6;
             let totalScore = 0;
             for(let i=0; i<validDims; i++) totalScore += finalScores[i];
             let healthIndex = Math.round(totalScore / validDims);
-
             const diagnosis = getDiagnosis(finalScores, healthIndex, isSurvivalMode);
-
             document.getElementById('resultTitle').innerText = diagnosis.title;
             document.getElementById('resultDesc').innerText = diagnosis.desc;
-            
-            // 优化分数显示：只更新数字，保留HTML结构
             document.getElementById('userScoreVal').innerText = healthIndex;
-            
             document.getElementById('diagnosisText').innerHTML = diagnosis.analysis;
             document.getElementById('actionPlan').innerHTML = diagnosis.actions;
-
             renderScoreCards(finalScores, isSurvivalMode);
             renderChart(finalScores);
         }
@@ -541,35 +451,19 @@
         function renderScoreCards(scores, isSurvival) {
             const container = document.getElementById('scoreCards');
             container.innerHTML = '';
-            
             const dimNames = ["定位力", "产品力", "吸引力", "转化力", "交付力", "系统力"];
-            
             dimNames.forEach((name, idx) => {
                 const card = document.createElement('div');
                 const isLocked = isSurvival && (idx === 4 || idx === 5);
-                
                 if (isLocked) {
                     card.className = "bg-slate-50 border border-slate-100 rounded-xl p-4 flex flex-col items-center justify-center text-center opacity-60";
-                    card.innerHTML = `
-                        <div class="text-xl mb-2 text-slate-300">🔒</div>
-                        <div class="text-xs font-bold text-slate-400 font-sans-ui">${name}</div>
-                        <div class="text-[10px] text-slate-400 mt-2 font-sans-ui bg-slate-100 px-2 py-0.5 rounded">进阶后自动解锁</div>
-                    `;
+                    card.innerHTML = `<div class="text-xl mb-2 text-slate-300">🔒</div><div class="text-xs font-bold text-slate-400 font-sans-ui">${name}</div><div class="text-[10px] text-slate-400 mt-2 font-sans-ui bg-slate-100 px-2 py-0.5 rounded">进阶后自动解锁</div>`;
                 } else {
                     const score = scores[idx];
                     let colorClass = score >= 80 ? "text-emerald-600" : (score >= 60 ? "text-indigo-600" : "text-amber-600");
                     let barColor = score >= 80 ? "bg-emerald-500" : (score >= 60 ? "bg-indigo-500" : "bg-amber-500");
-                    
                     card.className = "bg-white border border-slate-100 rounded-xl p-4 shadow-sm flex flex-col justify-between h-28 relative overflow-hidden";
-                    card.innerHTML = `
-                        <div class="flex justify-between items-start z-10">
-                            <span class="text-xs text-slate-500 font-bold font-sans-ui">${name}</span>
-                        </div>
-                        <div class="text-3xl font-black ${colorClass} z-10 mt-1 font-sans-ui">${score}</div>
-                        <div class="w-full bg-slate-100 h-1.5 rounded-full mt-auto z-10 overflow-hidden">
-                            <div class="h-full ${barColor}" style="width: ${score}%"></div>
-                        </div>
-                    `;
+                    card.innerHTML = `<div class="flex justify-between items-start z-10"><span class="text-xs text-slate-500 font-bold font-sans-ui">${name}</span></div><div class="text-3xl font-black ${colorClass} z-10 mt-1 font-sans-ui">${score}</div><div class="w-full bg-slate-100 h-1.5 rounded-full mt-auto z-10 overflow-hidden"><div class="h-full ${barColor}" style="width: ${score}%"></div></div>`;
                 }
                 container.appendChild(card);
             });
@@ -577,152 +471,22 @@
 
         function getDiagnosis(scores, total, isSurvival) {
             const [pos, prod, attr, conv, del, sys] = scores;
-            
-            // 1. 漏水的网红
-            if (attr > 70 && (conv < 55 || prod < 55)) {
-                return {
-                    title: "漏水的网红",
-                    desc: "流量获取能力优于后端承接能力，存在“高曝光、低转化”的现象。",
-                    analysis: `
-                        <p><strong>⚠️ 现状观察：</strong> 数据显示，你在【吸引力】维度表现突出，意味着你具备不错的内容创作或获客直觉。然而，【产品力】或【转化力】的相对滞后，导致流量进入后难以形成有效沉淀。这通常表现为：关注者不少，但实际付费意愿或客单价未达预期。</p>
-                        <p><strong>🔍 归因分析：</strong> 这种不平衡往往源于精力的分配偏差。在起步阶段，我们容易沉迷于可见的“虚荣指标”（如阅读量），而忽视了不可见的“信任建设”。流量是水，产品和转化机制是桶，目前的桶可能存在短板。</p>
-                        <p><strong>📉 发展提示：</strong> 持续的高强度引流而无法变现，容易导致创作者疲劳。建议暂时降低对流量的焦虑，转而打磨变现路径。</p>
-                    `,
-                    actions: `
-                        <div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">01</span><div><strong class="text-slate-800 text-sm">私域沉淀</strong><p class="text-xs text-slate-600 mt-1">设计一个高价值的“诱饵资料”，将公域流量引导至微信私域，建立更深度的信任链接。</p></div></div>
-                        <div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">02</span><div><strong class="text-slate-800 text-sm">转化率优化</strong><p class="text-xs text-slate-600 mt-1">复盘最近 10 个未成交客户，优化你的报价话术或产品介绍页。</p></div></div>
-                    `
-                };
-            }
-
-            // 2. 羞涩的工匠
-            if (prod > 70 && (attr < 55 || pos < 55)) {
-                return {
-                    title: "羞涩的工匠",
-                    desc: "交付能力强于市场链接能力，存在“酒香也怕巷子深”的挑战。",
-                    analysis: `
-                        <p><strong>⚠️ 现状观察：</strong> 你的【产品力】得分很高，说明你是一位对自己有要求的专业人士。但【吸引力】或【定位力】的不足，表明你在市场推广方面较为保守。你可能更倾向于打磨产品细节，而对“推销”自己感到不适。</p>
-                        <p><strong>🔍 归因分析：</strong> 这是技术出身创业者的常见特征。我们往往误以为“好产品自己会说话”，但在信息过载的时代，这并不总是成立。你的沉默，可能会让那些产品不如你、但声量更大的人占据市场。</p>
-                        <p><strong>📉 发展提示：</strong> 商业的本质是价值交换。让更多人知道你的价值，是对自己专业能力的负责，也是对潜在客户的负责。</p>
-                    `,
-                    actions: `
-                        <div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">01</span><div><strong class="text-slate-800 text-sm">最小可行性推广</strong><p class="text-xs text-slate-600 mt-1">尝试“暴力推广周”：下周禁止修改产品，强制自己每天联系 5 个潜在客户或发布一条推广内容。</p></div></div>
-                        <div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">02</span><div><strong class="text-slate-800 text-sm">借力发声</strong><p class="text-xs text-slate-600 mt-1">如果不善言辞，可以寻找擅长营销的合作伙伴，或通过客户证言来替你说话。</p></div></div>
-                    `
-                };
-            }
-
-            // 3. 忙碌的无头苍蝇
-            if (pos < 50 && total > 55) {
-                return {
-                    title: "忙碌的探索者",
-                    desc: "战术勤奋，但战略聚焦度有待提升，业务线可能过于分散。",
-                    analysis: `
-                        <p><strong>⚠️ 现状观察：</strong> 你投入了大量时间精力，但【定位力】得分偏低。这通常意味着你在同时尝试多种业务，或者服务着各类需求迥异的客户。这种“来者不拒”的模式，让你陷入了低效的忙碌。</p>
-                        <p><strong>🔍 归因分析：</strong> 缺乏清晰的“不服务清单”是主要原因。因为没有聚焦，你无法形成标准化的SOP，每一次交付都像是在重新创业，导致边际成本居高不下。</p>
-                        <p><strong>📉 发展提示：</strong> 一人公司的核心优势是“专精”。做减法，是通往高溢价的必经之路。</p>
-                    `,
-                    actions: `
-                        <div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">01</span><div><strong class="text-slate-800 text-sm">聚焦细分 (Niche Down)</strong><p class="text-xs text-slate-600 mt-1">回顾过往项目，找出利润最高且你最享受的那一类，将它定义为核心业务，逐步砍掉其他杂项。</p></div></div>
-                    `
-                };
-            }
-
-            // 4. 高薪打杂工
-            if (!isSurvival && sys < 55 && (attr > 60 || conv > 60)) {
-                return {
-                    title: "高负荷的独行侠",
-                    desc: "业务发展良好，但个人时间被严重挤占，系统化程度滞后。",
-                    analysis: `
-                        <p><strong>⚠️ 现状观察：</strong> 你的业务已经跑通，甚至收入可观，但【系统力】成为了明显的短板。这表现为：你不敢停下来，所有事务都高度依赖你的亲力亲为。</p>
-                        <p><strong>🔍 归因分析：</strong> 你可能陷入了“自己做更放心”的思维定势。但作为一人公司的CEO，你的时间应该花在决策和核心交付上，而非重复性的行政琐事。凡是不能自动化的业务，最终都会变成限制你增长的瓶颈。</p>
-                    `,
-                    actions: `
-                        <div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">01</span><div><strong class="text-slate-800 text-sm">建立SOP</strong><p class="text-xs text-slate-600 mt-1">开始记录你的工作流程。把你做对的事情写下来，让工具或外包人员来分担。</p></div></div>
-                    `
-                };
-            }
-
-            // 5. 荒野求生者
-            if (isSurvival && total < 75) {
-                return {
-                    title: "荒野求生者",
-                    desc: "处于从0到1的验证初期，商业闭环尚未完全跑通。",
-                    analysis: `
-                        <p><strong>⚠️ 现状观察：</strong> 混乱是起步期的常态。你可能面临着方向不确定、收入不稳定的双重压力。这是最艰难的阶段，但也蕴含着最大的可能性。</p>
-                        <p><strong>🔍 阶段策略：</strong> 此时此刻，任何不直接带来现金流的动作（如设计Logo、装修网站）都是次要的。你需要的不是完美的战略，而是第一个付费客户。</p>
-                    `,
-                    actions: `
-                        <div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">01</span><div><strong class="text-slate-800 text-sm">单点突破</strong><p class="text-xs text-slate-600 mt-1">不要试图平衡发展。选定一个最小的切口，集中所有精力搞定第一单交付。</p></div></div>
-                    `
-                };
-            }
-
-            // 6. 沉睡的巨龙
-            if (isSurvival && total >= 75) {
-                return {
-                    title: "潜力独角兽",
-                    desc: "商业直觉敏锐，基础模型健康，只待规模化验证。",
-                    analysis: `
-                        <p><strong>🌟 状态极佳：</strong> 虽然处于起步阶段，但你的各项指标非常健康。你没有明显的短板，且定位清晰。你现在的状态就像是一颗优质的种子，土壤和水分都已具备。</p>
-                        <p><strong>🚀 进阶方向：</strong> 不要满足于现状。你现在可以适当增加风险偏好，尝试一些能够带来指数级增长的动作。</p>
-                    `,
-                    actions: `
-                        <div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">01</span><div><strong class="text-slate-800 text-sm">加大油门</strong><p class="text-xs text-slate-600 mt-1">既然模型验证跑通了，现在可以适当增加投入，测试一下放大流量后的承接能力。</p></div></div>
-                    `
-                };
-            }
-
-            // 7. 六边形战士
-            if (!isSurvival && total >= 80) {
-                return {
-                    title: "全能经营者",
-                    desc: "商业模型成熟健康，具备了规模化与资产化的基础。",
-                    analysis: `
-                        <p><strong>👏 状态极佳：</strong> 恭喜你，你已经是一人公司领域的佼佼者。你跑通了闭环，并且在各个维度都建立了壁垒。你的业务不再依赖运气，而是一套精密运转的系统。</p>
-                        <p><strong>🚀 终极目标：</strong> 从“经营生意”转向“经营资产”。思考如何将你的服务产品化，实现边际成本递减。</p>
-                    `,
-                    actions: `
-                        <div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">01</span><div><strong class="text-slate-800 text-sm">产品化 (Productize)</strong><p class="text-xs text-slate-600 mt-1">将你的服务封装成课程、软件或标准化产品，追求“睡后收入”。</p></div></div>
-                    `
-                };
-            }
-
-            // 8. 辛勤的耕耘者
-            if (!isSurvival && total >= 60 && total < 80) {
-                return {
-                    title: "稳健的耕耘者",
-                    desc: "基础扎实，但缺乏让市场尖叫的差异化亮点。",
-                    analysis: `
-                        <p><strong>📈 现状观察：</strong> 你已经跨过了生存线，业务运转平稳。但这种“平稳”可能也是一种隐患——没有突出的长板，意味着溢价能力有限，容易陷入同质化竞争。</p>
-                        <p><strong>🚀 破局思路：</strong> 必须制造“尖叫点”。平庸是商业最大的敌人。与其全面平庸，不如单点极致。</p>
-                    `,
-                    actions: `
-                        <div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">01</span><div><strong class="text-slate-800 text-sm">打造尖刀</strong><p class="text-xs text-slate-600 mt-1">选一个你最擅长的环节，把它做到行业前 5%，用这把尖刀切开更大的市场。</p></div></div>
-                    `
-                };
-            }
-
-            // 9. 默认兜底
-            return {
-                title: "待破局的探索者",
-                desc: "各维度发展较为平均，尚未形成明显的竞争壁垒。",
-                analysis: `
-                    <p><strong>⚠️ 核心症结：</strong> 你可能在试图“补短板”，这在一人公司模式下效率较低。一个人的精力有限，不可能面面俱到。没有长板，就无法形成穿透力。</p>
-                `,
-                actions: `
-                    <div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">01</span><div><strong class="text-slate-800 text-sm">长板效应</strong><p class="text-xs text-slate-600 mt-1">找出你得分最高的那一项，投入资源把它做到极致。</p></div></div>
-                `
-            };
+            if (attr > 70 && (conv < 55 || prod < 55)) return { title: "漏水的网红", desc: "流量获取能力优于后端承接能力，存在“高曝光、低转化”的现象。", analysis: `<p><strong>⚠️ 现状观察：</strong> 数据显示，你在【吸引力】维度表现突出，意味着你具备不错的内容创作或获客直觉。然而，【产品力】或【转化力】的相对滞后，导致流量进入后难以形成有效沉淀。</p><p><strong>🔍 归因分析：</strong> 这种不平衡往往源于精力的分配偏差。在起步阶段，我们容易沉迷于可见的“虚荣指标”（如阅读量），而忽视了不可见的“信任建设”。</p>`, actions: `<div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">01</span><div><strong class="text-slate-800 text-sm">私域沉淀</strong><p class="text-xs text-slate-600 mt-1">设计一个高价值的“诱饵资料”，将公域流量引导至微信私域，建立更深度的信任链接。</p></div></div><div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">02</span><div><strong class="text-slate-800 text-sm">转化率优化</strong><p class="text-xs text-slate-600 mt-1">复盘最近 10 个未成交客户，优化你的报价话术或产品介绍页。</p></div></div>` };
+            if (prod > 70 && (attr < 55 || pos < 55)) return { title: "羞涩的工匠", desc: "交付能力强于市场链接能力，存在“酒香也怕巷子深”的挑战。", analysis: `<p><strong>⚠️ 现状观察：</strong> 你的【产品力】得分很高，说明你是一位对自己有要求的专业人士。但【吸引力】或【定位力】的不足，表明你在市场推广方面较为保守。</p><p><strong>🔍 归因分析：</strong> 这是技术出身创业者的常见特征。我们往往误以为“好产品自己会说话”，但在信息过载的时代，这并不总是成立。</p>`, actions: `<div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">01</span><div><strong class="text-slate-800 text-sm">最小可行性推广</strong><p class="text-xs text-slate-600 mt-1">尝试“暴力推广周”：下周禁止修改产品，强制自己每天联系 5 个潜在客户或发布一条推广内容。</p></div></div>` };
+            if (pos < 50 && total > 55) return { title: "忙碌的探索者", desc: "战术勤奋，但战略聚焦度有待提升，业务线可能过于分散。", analysis: `<p><strong>⚠️ 现状观察：</strong> 你投入了大量时间精力，但【定位力】得分偏低。这通常意味着你在同时尝试多种业务，或者服务着各类需求迥异的客户。</p><p><strong>🔍 归因分析：</strong> 缺乏清晰的“不服务清单”是主要原因。因为没有聚焦，你无法形成标准化的SOP，每一次交付都像是在重新创业。</p>`, actions: `<div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">01</span><div><strong class="text-slate-800 text-sm">聚焦细分 (Niche Down)</strong><p class="text-xs text-slate-600 mt-1">回顾过往项目，找出利润最高且你最享受的那一类，将它定义为核心业务，逐步砍掉其他杂项。</p></div></div>` };
+            if (!isSurvival && sys < 55 && (attr > 60 || conv > 60)) return { title: "高负荷的独行侠", desc: "业务发展良好，但个人时间被严重挤占，系统化程度滞后。", analysis: `<p><strong>⚠️ 现状观察：</strong> 你的业务已经跑通，甚至收入可观，但【系统力】成为了明显的短板。这表现为：你不敢停下来，所有事务都高度依赖你的亲力亲为。</p><p><strong>🔍 归因分析：</strong> 你可能陷入了“自己做更放心”的思维定势。但作为一人公司的CEO，你的时间应该花在决策和核心交付上，而非重复性的行政琐事。</p>`, actions: `<div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">01</span><div><strong class="text-slate-800 text-sm">建立SOP</strong><p class="text-xs text-slate-600 mt-1">开始记录你的工作流程。把你做对的事情写下来，让工具或外包人员来分担。</p></div></div>` };
+            if (isSurvival && total < 75) return { title: "荒野求生者", desc: "处于从0到1的验证初期，商业闭环尚未完全跑通。", analysis: `<p><strong>⚠️ 现状观察：</strong> 混乱是起步期的常态。你可能面临着方向不确定、收入不稳定的双重压力。这是最艰难的阶段，但也蕴含着最大的可能性。</p><p><strong>🔍 阶段策略：</strong> 此时此刻，任何不直接带来现金流的动作（如设计Logo、装修网站）都是次要的。</p>`, actions: `<div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">01</span><div><strong class="text-slate-800 text-sm">单点突破</strong><p class="text-xs text-slate-600 mt-1">不要试图平衡发展。选定一个最小的切口，集中所有精力搞定第一单交付。</p></div></div>` };
+            if (isSurvival && total >= 75) return { title: "潜力独角兽", desc: "商业直觉敏锐，基础模型健康，只待规模化验证。", analysis: `<p><strong>🌟 状态极佳：</strong> 虽然处于起步阶段，但你的各项指标非常健康。你没有明显的短板，且定位清晰。</p><p><strong>🚀 进阶方向：</strong> 不要满足于现状。你现在可以适当增加风险偏好，尝试一些能够带来指数级增长的动作。</p>`, actions: `<div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">01</span><div><strong class="text-slate-800 text-sm">加大油门</strong><p class="text-xs text-slate-600 mt-1">既然模型验证跑通了，现在可以适当增加投入，测试一下放大流量后的承接能力。</p></div></div>` };
+            if (!isSurvival && total >= 80) return { title: "全能经营者", desc: "商业模型成熟健康，具备了规模化与资产化的基础。", analysis: `<p><strong>👏 状态极佳：</strong> 恭喜你，你已经是一人公司领域的佼佼者。你跑通了闭环，并且在各个维度都建立了壁垒。</p><p><strong>🚀 终极目标：</strong> 从“经营生意”转向“经营资产”。思考如何将你的服务产品化，实现边际成本递减。</p>`, actions: `<div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">01</span><div><strong class="text-slate-800 text-sm">产品化 (Productize)</strong><p class="text-xs text-slate-600 mt-1">将你的服务封装成课程、软件或标准化产品，追求“睡后收入”。</p></div></div>` };
+            if (!isSurvival && total >= 60 && total < 80) return { title: "稳健的耕耘者", desc: "基础扎实，但缺乏让市场尖叫的差异化亮点。", analysis: `<p><strong>📈 现状观察：</strong> 你已经跨过了生存线，业务运转平稳。但这种“平稳”可能也是一种隐患——没有突出的长板，意味着溢价能力有限。</p><p><strong>🚀 破局思路：</strong> 必须制造“尖叫点”。平庸是商业最大的敌人。与其全面平庸，不如单点极致。</p>`, actions: `<div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">01</span><div><strong class="text-slate-800 text-sm">打造尖刀</strong><p class="text-xs text-slate-600 mt-1">选一个你最擅长的环节，把它做到行业前 5%，用这把尖刀切开更大的市场。</p></div></div>` };
+            return { title: "待破局的探索者", desc: "各维度发展较为平均，尚未形成明显的竞争壁垒。", analysis: `<p><strong>⚠️ 核心症结：</strong> 你可能在试图“补短板”，这在一人公司模式下效率较低。一个人的精力有限，不可能面面俱到。</p>`, actions: `<div class="flex gap-3 items-start"><span class="text-indigo-900 font-mono text-xs mt-1 font-bold">01</span><div><strong class="text-slate-800 text-sm">长板效应</strong><p class="text-xs text-slate-600 mt-1">找出你得分最高的那一项，投入资源把它做到极致。</p></div></div>` };
         }
 
         let radarChart = null;
         function renderChart(data) {
             const ctx = document.getElementById('radarChart').getContext('2d');
             const chartData = isSurvivalMode ? [...data.slice(0,4), 0, 0] : data;
-
             if (radarChart) radarChart.destroy();
-
             radarChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
@@ -754,6 +518,23 @@
                     maintainAspectRatio: false
                 }
             });
+        }
+
+        // --- 截图模式逻辑 ---
+        function toggleSnapshotMode() {
+            document.body.classList.add('snapshot-mode');
+            document.getElementById('snapshotOverlay').classList.remove('hidden');
+            document.getElementById('snapshotOverlay').classList.add('flex');
+            
+            // 滚动到顶部，确保截图从头开始
+            window.scrollTo(0, 0);
+            document.getElementById('resultPage').scrollTo(0, 0);
+        }
+
+        function exitSnapshotMode() {
+            document.body.classList.remove('snapshot-mode');
+            document.getElementById('snapshotOverlay').classList.add('hidden');
+            document.getElementById('snapshotOverlay').classList.remove('flex');
         }
     </script>
 </body>
