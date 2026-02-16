@@ -23,9 +23,7 @@
         
         /* 动画定义 */
         .fade-in { animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-        .slide-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         /* 按钮样式 */
         .btn-primary { 
@@ -48,7 +46,7 @@
 
         /* 核心容器适配：使用 dvh 适配移动端浏览器地址栏 */
         #app-container {
-            height: 100dvh; /* 关键：动态视口高度 */
+            height: 100dvh; 
             width: 100%;
             display: flex;
             flex-direction: column;
@@ -60,7 +58,7 @@
             flex: 1;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            padding-bottom: 40px; /* 底部留白 */
+            padding-bottom: 40px; 
         }
     </style>
 </head>
@@ -72,7 +70,7 @@
     <!-- 主应用容器 -->
     <div id="app-container" class="max-w-2xl mx-auto bg-white shadow-2xl relative">
         
-        <!-- 顶部进度条 (固定在容器顶部) -->
+        <!-- 顶部进度条 -->
         <div id="progressBarContainer" class="hidden w-full h-1 bg-slate-100 absolute top-0 left-0 z-20">
             <div id="progressBar" class="h-full bg-indigo-900 transition-all duration-300 ease-out" style="width: 0%"></div>
         </div>
@@ -96,10 +94,6 @@
                         <span class="text-sm mt-0.5">🧠</span> 
                         <div><strong class="text-slate-800">智能适配</strong><p class="text-slate-500 mt-0.5">系统会根据你的生存阶段，自动适配评分逻辑。</p></div>
                     </li>
-                    <li class="flex items-start gap-3">
-                        <span class="text-sm mt-0.5">🤝</span> 
-                        <div><strong class="text-slate-800">诚实原则</strong><p class="text-slate-500 mt-0.5">请根据当前真实业务现状作答，而非“未来计划”。</p></div>
-                    </li>
                 </ul>
             </div>
 
@@ -114,7 +108,6 @@
 
         <!-- 2. 答题页 -->
         <div id="quizPage" class="hidden flex-col h-full relative">
-            <!-- 题目区域 (可滚动) -->
             <div class="scrollable-content p-6 md:p-8">
                 <div class="mb-4 pt-4">
                     <div class="flex justify-between items-center mb-4 font-sans-ui">
@@ -126,7 +119,6 @@
                 <div id="optionsBox" class="space-y-3 font-sans-ui pb-20"></div>
             </div>
 
-            <!-- 底部按钮 (固定) -->
             <div class="absolute bottom-0 left-0 w-full p-4 bg-white/95 backdrop-blur-sm border-t border-slate-50 flex justify-between items-center font-sans-ui z-10">
                 <button onclick="prevQuestion()" id="prevBtn" class="text-slate-400 hover:text-slate-600 text-xs font-bold px-4 py-2 rounded-lg transition-colors hidden">← 上一题</button>
                 <button onclick="nextQuestion()" id="nextBtn" disabled class="btn-primary py-3 px-8 rounded-xl font-bold text-sm ml-auto shadow-lg">下一题</button>
@@ -155,7 +147,11 @@
                     
                     <div class="relative z-10 pt-4">
                         <div class="flex justify-between items-start mb-6">
-                            <div class="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold border border-slate-700 px-3 py-1.5 rounded-full bg-slate-800/50 font-sans-ui">当前商业画像</div>
+                            <div class="flex gap-2">
+                                <div class="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold border border-slate-700 px-3 py-1.5 rounded-full bg-slate-800/50 font-sans-ui">当前商业画像</div>
+                                <!-- 新增：阶段标签 -->
+                                <div id="stageLabel" class="text-[10px] uppercase tracking-wider text-white font-bold px-3 py-1.5 rounded-full bg-indigo-600 font-sans-ui hidden">起步期 (0-1)</div>
+                            </div>
                             <div class="text-right">
                                 <div class="flex items-baseline justify-end gap-1 font-sans-ui">
                                     <span class="text-5xl font-black text-white tracking-tighter" id="userScoreVal">0</span>
@@ -172,15 +168,14 @@
                 <div class="p-6 space-y-8 pb-24">
                     <!-- 1. 核心图表 -->
                     <div class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm">
-                        <h3 class="font-bold text-slate-400 text-[10px] uppercase tracking-widest mb-4 text-center font-sans-ui">一人公司 · 六维能力雷达</h3>
                         <div class="h-60 w-full relative flex justify-center">
                             <canvas id="radarChart"></canvas>
                         </div>
                     </div>
 
-                    <!-- 2. 维度定义与得分 -->
+                    <!-- 2. 维度定义与得分 (修改文案) -->
                     <div>
-                        <h3 class="font-bold text-slate-900 text-sm mb-4 flex items-center gap-2 uppercase tracking-wide font-sans-ui"><span class="text-base">📊</span> 能力模型详解</h3>
+                        <h3 class="font-bold text-slate-900 text-sm mb-4 flex items-center gap-2 uppercase tracking-wide font-sans-ui"><span class="text-base">📊</span> 六维能力得分</h3>
                         <div id="scoreCards" class="grid grid-cols-2 gap-3"></div>
                     </div>
 
@@ -244,7 +239,6 @@
             </div>
             
             <div class="mt-6 text-center border-t border-slate-100 pt-4">
-                <!-- 链接已更新 -->
                 <p class="text-xs text-slate-400">还没有兑换码？<a href="https://xhslink.com/m/9zlRIGza06v" target="_blank" class="text-indigo-600 hover:underline font-bold">点击获取</a></p>
             </div>
         </div>
@@ -267,8 +261,6 @@
 
         let isUnlocked = localStorage.getItem('isUnlocked') === 'true';
 
-        // --- 核心逻辑 ---
-        
         // 维度定义字典
         const DIMENSION_DEFS = {
             "定位力": "差异化与生态位选择",
@@ -336,11 +328,9 @@
         let answers = new Array(questions.length).fill(null);
         let isSurvivalMode = false;
         const dimensions = ["定位力", "产品力", "吸引力", "转化力", "交付力", "系统力"];
-        let finalScoresForDownload = []; // 用于下载的数据
+        let finalScoresForDownload = [];
 
         document.getElementById('totalQ').innerText = questions.length;
-
-        // --- 流程控制 ---
 
         function checkCodeAndStart() {
             if (isUnlocked) {
@@ -509,8 +499,6 @@
             }, 2000);
         }
 
-        // --- 结果展示逻辑 ---
-
         let finalHealthIndex = 0;
         let finalTitle = "";
 
@@ -520,6 +508,17 @@
             document.getElementById('progressBarContainer').classList.add('hidden');
             document.getElementById('resultPage').classList.remove('hidden');
             document.getElementById('resultPage').classList.add('flex');
+            
+            // 显示阶段标签
+            const stageLabel = document.getElementById('stageLabel');
+            stageLabel.classList.remove('hidden');
+            if (isSurvivalMode) {
+                stageLabel.innerText = "起步期 (0-1)";
+                stageLabel.className = "text-[10px] uppercase tracking-wider text-white font-bold px-3 py-1.5 rounded-full bg-amber-500 font-sans-ui";
+            } else {
+                stageLabel.innerText = "成长期 (1-N)";
+                stageLabel.className = "text-[10px] uppercase tracking-wider text-white font-bold px-3 py-1.5 rounded-full bg-emerald-500 font-sans-ui";
+            }
         }
 
         function calculateAndRender() {
@@ -532,7 +531,7 @@
                 }
             });
             let finalScores = dimScores.map((s, i) => dimCounts[i] ? Math.round((s / dimCounts[i]) * 20) : 0);
-            finalScoresForDownload = finalScores; // 保存供下载使用
+            finalScoresForDownload = finalScores;
 
             let validDims = isSurvivalMode ? 4 : 6;
             let totalScore = 0;
@@ -557,7 +556,7 @@
             dimensions.forEach((name, idx) => {
                 const card = document.createElement('div');
                 const isLocked = isSurvival && (idx === 4 || idx === 5);
-                const desc = DIMENSION_DEFS[name]; // 获取定义
+                const desc = DIMENSION_DEFS[name]; 
                 
                 if (isLocked) {
                     card.className = "bg-slate-50 border border-slate-100 rounded-lg p-3 flex flex-col items-center justify-center text-center opacity-60";
@@ -572,7 +571,7 @@
                                 <span class="text-xs text-slate-600 font-bold font-sans-ui">${name}</span>
                                 <span class="text-sm font-black ${colorClass} font-sans-ui">${score}</span>
                             </div>
-                            <div class="text-[10px] text-slate-400 leading-tight font-sans-ui scale-90 origin-top-left">${desc}</div>
+                            <div class="text-[10px] text-slate-400 leading-tight font-sans-ui scale-90 origin-top-left mt-1">${desc}</div>
                         </div>
                     `;
                 }
@@ -636,15 +635,15 @@
             });
         }
 
-        // --- 增强版图片生成逻辑 ---
+        // --- 增强版图片生成逻辑 (重构布局) ---
         
         function downloadCard() {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             
             // 设定长图尺寸
-            const width = 800;
-            const height = 1500; // 增加高度以容纳详情
+            const width = 750; // 标准手机宽度
+            const height = 1350; 
             canvas.width = width;
             canvas.height = height;
 
@@ -654,80 +653,96 @@
             
             // 顶部深色块
             ctx.fillStyle = '#0f172a';
-            ctx.fillRect(0, 0, width, 380);
+            ctx.fillRect(0, 0, width, 300);
 
             // 2. 绘制头部信息
             ctx.textAlign = 'center';
             
             // 标题
             ctx.fillStyle = '#94a3b8';
-            ctx.font = 'bold 24px "PingFang SC", sans-serif';
-            ctx.fillText('一人公司 · 商业体质诊断', width / 2, 80);
+            ctx.font = 'bold 22px "PingFang SC", sans-serif';
+            ctx.fillText('一人公司 · 商业体质诊断', width / 2, 60);
 
             // 分数
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 100px "PingFang SC", sans-serif';
-            ctx.fillText(finalHealthIndex, width / 2, 200);
+            ctx.font = 'bold 90px "PingFang SC", sans-serif';
+            ctx.fillText(finalHealthIndex, width / 2, 160);
             
-            ctx.font = '20px "PingFang SC", sans-serif';
+            ctx.font = '18px "PingFang SC", sans-serif';
             ctx.fillStyle = '#64748b';
-            ctx.fillText('商业健康总分', width / 2, 240);
+            ctx.fillText('商业健康总分', width / 2, 195);
+
+            // 阶段标签 (绘制圆角矩形)
+            const stageText = isSurvivalMode ? "起步期 (0-1)" : "成长期 (1-N)";
+            const stageColor = isSurvivalMode ? "#f59e0b" : "#10b981";
+            ctx.fillStyle = stageColor;
+            roundRect(ctx, width/2 - 60, 220, 120, 30, 15, true);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 12px "PingFang SC", sans-serif';
+            ctx.fillText(stageText, width / 2, 240);
 
             // 诊断称号
-            ctx.font = 'bold 48px "PingFang SC", sans-serif';
-            ctx.fillStyle = '#ffffff';
-            ctx.fillText(finalTitle, width / 2, 320);
+            ctx.font = 'bold 40px "PingFang SC", sans-serif';
+            ctx.fillStyle = '#1e293b';
+            ctx.fillText(finalTitle, width / 2, 360);
 
             // 3. 绘制雷达图
             const chartImgUrl = radarChart.toBase64Image();
             const chartImg = new Image();
             chartImg.onload = function() {
-                // 白色卡片背景
-                ctx.fillStyle = '#ffffff';
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.05)';
-                ctx.shadowBlur = 20;
-                ctx.shadowOffsetY = 10;
-                ctx.fillRect(50, 420, width - 100, 950);
-                ctx.shadowColor = 'transparent';
+                // 绘制雷达图 (居中)
+                ctx.drawImage(chartImg, (width - 400)/2, 390, 400, 400);
 
-                // 绘制雷达图
-                ctx.drawImage(chartImg, 150, 450, 500, 500);
+                // 4. 绘制六维能力详情表 (2x3 对称网格)
+                const startY = 820;
+                const gridW = 320;
+                const gridH = 100;
+                const gap = 20;
+                const startX = (width - (gridW * 2 + gap)) / 2;
 
-                // 4. 绘制六维能力详情表
-                let startY = 980;
-                const colWidth = 320;
-                const rowHeight = 80;
-                
-                ctx.textAlign = 'left';
-                
                 dimensions.forEach((dim, idx) => {
-                    const x = idx % 2 === 0 ? 80 : 420;
-                    const y = startY + Math.floor(idx / 2) * rowHeight;
+                    const col = idx % 2;
+                    const row = Math.floor(idx / 2);
+                    const x = startX + col * (gridW + gap);
+                    const y = startY + row * (gridH + gap);
                     const score = finalScoresForDownload[idx];
                     const def = DIMENSION_DEFS[dim];
 
+                    // 绘制卡片背景
+                    ctx.fillStyle = '#ffffff';
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.05)';
+                    ctx.shadowBlur = 10;
+                    ctx.shadowOffsetY = 5;
+                    roundRect(ctx, x, y, gridW, gridH, 12, true);
+                    ctx.shadowColor = 'transparent';
+
+                    // 绘制内容
+                    ctx.textAlign = 'left';
+                    
                     // 维度名
-                    ctx.fillStyle = '#64748b';
-                    ctx.font = 'bold 20px "PingFang SC", sans-serif';
-                    ctx.fillText(dim, x, y);
+                    ctx.fillStyle = '#1e293b';
+                    ctx.font = 'bold 18px "PingFang SC", sans-serif';
+                    ctx.fillText(dim, x + 20, y + 35);
 
                     // 分数
                     let scoreColor = score >= 80 ? '#059669' : (score >= 60 ? '#4f46e5' : '#d97706');
                     ctx.fillStyle = scoreColor;
                     ctx.font = 'bold 24px "PingFang SC", sans-serif';
-                    ctx.fillText(score + '分', x + 80, y);
+                    ctx.textAlign = 'right';
+                    ctx.fillText(score, x + gridW - 20, y + 35);
 
-                    // 定义解释
+                    // 定义 (小字)
+                    ctx.textAlign = 'left';
                     ctx.fillStyle = '#94a3b8';
-                    ctx.font = '16px "PingFang SC", sans-serif';
-                    ctx.fillText(def, x, y + 30);
+                    ctx.font = '12px "PingFang SC", sans-serif';
+                    ctx.fillText(def, x + 20, y + 70);
                 });
 
                 // 5. 底部版权
                 ctx.textAlign = 'center';
                 ctx.fillStyle = '#cbd5e1';
-                ctx.font = '18px "PingFang SC", sans-serif';
-                ctx.fillText('© 安清酉 · 商业体质诊断', width / 2, 1420);
+                ctx.font = '14px "PingFang SC", sans-serif';
+                ctx.fillText('© 安清酉 · 商业体质诊断系统', width / 2, 1300);
 
                 // 触发下载
                 const link = document.createElement('a');
@@ -736,6 +751,22 @@
                 link.click();
             };
             chartImg.src = chartImgUrl;
+        }
+
+        // 辅助函数：绘制圆角矩形
+        function roundRect(ctx, x, y, width, height, radius, fill) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+            if (fill) ctx.fill();
         }
 
     </script>
