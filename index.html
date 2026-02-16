@@ -2,175 +2,205 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>一人公司 · 商业体质诊断</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&display=swap');
 
-        body { 
-            font-family: 'Noto Serif SC', 'Songti SC', serif; 
-            background-color: #f8fafc; 
-            color: #334155; 
+        /* 锁定页面滚动，防止手机端橡皮筋效果和晃动 */
+        body, html {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: #f8fafc;
+            font-family: 'Noto Serif SC', 'Songti SC', serif;
             -webkit-font-smoothing: antialiased;
         }
+
         .font-sans-ui { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; }
         
-        .fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-        .slide-up { animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+        /* 动画定义 */
+        .fade-in { animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .slide-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* 按钮样式 */
         .btn-primary { 
             background: linear-gradient(135deg, #1e3a8a 0%, #172554 100%); 
             color: white; 
-            transition: all 0.3s;
+            transition: all 0.2s;
             font-family: 'PingFang SC', sans-serif; 
         }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(30, 58, 138, 0.25); }
+        .btn-primary:active { transform: scale(0.98); }
         .btn-primary:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; box-shadow: none; }
         
+        /* 选项卡片样式 */
         .option-card { transition: all 0.2s; cursor: pointer; border: 1px solid #e2e8f0; }
-        .option-card:hover { background-color: #f8fafc; border-color: #94a3b8; transform: translateX(4px); }
-        .option-card.selected { border-color: #1e3a8a; background-color: #eff6ff; color: #1e3a8a; font-weight: 700; ring: 1px solid #1e3a8a; transform: translateX(4px); }
+        .option-card:active { background-color: #f1f5f9; transform: scale(0.99); }
+        .option-card.selected { border-color: #1e3a8a; background-color: #eff6ff; color: #1e3a8a; font-weight: 700; ring: 1px solid #1e3a8a; }
 
+        /* 隐藏滚动条但允许滚动 */
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* 核心容器适配：使用 dvh 适配移动端浏览器地址栏 */
+        #app-container {
+            height: 100dvh; /* 关键：动态视口高度 */
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        /* 内容区域滚动 */
+        .scrollable-content {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 40px; /* 底部留白 */
+        }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 md:p-6 bg-slate-50">
+<body>
 
-    <!-- 主容器 -->
-    <div id="mainContainer" class="w-full max-w-2xl bg-white rounded-[2rem] shadow-2xl overflow-hidden min-h-[850px] flex flex-col border border-slate-100 relative transition-all duration-300">
+    <!-- 全局背景 -->
+    <div class="fixed inset-0 bg-slate-50 z-[-1]"></div>
+
+    <!-- 主应用容器 -->
+    <div id="app-container" class="max-w-2xl mx-auto bg-white shadow-2xl relative">
         
-        <!-- 顶部进度条 -->
+        <!-- 顶部进度条 (固定在容器顶部) -->
         <div id="progressBarContainer" class="hidden w-full h-1 bg-slate-100 absolute top-0 left-0 z-20">
-            <div id="progressBar" class="h-full bg-indigo-900 transition-all duration-500 ease-out" style="width: 0%"></div>
+            <div id="progressBar" class="h-full bg-indigo-900 transition-all duration-300 ease-out" style="width: 0%"></div>
         </div>
 
-        <div class="flex-1 flex flex-col h-full relative z-10">
+        <!-- 1. 首页 -->
+        <div id="startPage" class="scrollable-content flex flex-col justify-center items-center text-center p-8 fade-in h-full">
+            <div class="w-20 h-20 bg-indigo-950 rounded-full flex items-center justify-center mb-6 text-4xl shadow-xl text-white ring-4 ring-indigo-50">
+                🧬
+            </div>
+            <h1 class="text-2xl md:text-3xl font-black text-indigo-950 mb-3 tracking-tight">一人公司 · 商业体质诊断</h1>
+            <p class="text-slate-500 mb-8 text-base font-medium italic">“从生存到系统，找到阻碍你收入跃迁的那个卡点”</p>
             
-            <!-- 1. 首页 -->
-            <div id="startPage" class="flex-1 flex flex-col justify-center items-center text-center p-10 fade-in">
-                <div class="w-24 h-24 bg-indigo-950 rounded-full flex items-center justify-center mb-8 text-5xl shadow-xl text-white ring-4 ring-indigo-50">
-                    🧬
-                </div>
-                <h1 class="text-3xl md:text-4xl font-black text-indigo-950 mb-4 tracking-tight">一人公司 · 商业体质诊断</h1>
-                <p class="text-slate-500 mb-8 text-lg font-medium italic">“从生存到系统，找到阻碍你收入跃迁的那个卡点”</p>
-                
-                <div class="bg-slate-50 p-8 rounded-2xl text-left text-slate-600 mb-10 w-full max-w-md border border-slate-100">
-                    <p class="font-bold text-slate-900 mb-4 text-base border-b border-slate-200 pb-2 font-sans-ui">📋 测评说明</p>
-                    <ul class="space-y-5 font-sans-ui text-sm">
-                        <!-- 修改点：按照你的要求更新了文案 -->
-                        <li class="flex items-start gap-3">
-                            <span class="text-base mt-0.5">🏗️</span> 
-                            <div><strong class="text-slate-800">全维扫描</strong><p class="text-slate-500 mt-0.5">包含「生存状态扫描」与「核心能力体检」两部分。</p></div>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-base mt-0.5">🧠</span> 
-                            <div><strong class="text-slate-800">智能适配</strong><p class="text-slate-500 mt-0.5">系统会根据你的生存阶段，自动适配评分逻辑，确保诊断精准。</p></div>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-base mt-0.5">🤝</span> 
-                            <div><strong class="text-slate-800">诚实原则</strong><p class="text-slate-500 mt-0.5">请根据当前真实业务现状作答，而非“未来计划”。</p></div>
-                        </li>
-                    </ul>
-                </div>
-
-                <button onclick="checkCodeAndStart()" class="btn-primary font-bold py-4 px-16 rounded-xl text-lg shadow-xl hover:shadow-2xl transform transition-all font-sans-ui tracking-wide">
-                    开始深度扫描
-                </button>
-                
-                <div class="mt-12 text-xs text-slate-300 font-sans-ui">
-                    © 安清酉 · 版权所有
-                </div>
+            <div class="bg-slate-50 p-6 rounded-2xl text-left text-slate-600 mb-8 w-full border border-slate-100 shadow-sm">
+                <p class="font-bold text-slate-900 mb-3 text-sm border-b border-slate-200 pb-2 font-sans-ui">📋 测评说明</p>
+                <ul class="space-y-4 font-sans-ui text-xs md:text-sm">
+                    <li class="flex items-start gap-3">
+                        <span class="text-sm mt-0.5">🏗️</span> 
+                        <div><strong class="text-slate-800">全维扫描</strong><p class="text-slate-500 mt-0.5">包含「生存状态扫描」与「核心能力体检」两部分。</p></div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-sm mt-0.5">🧠</span> 
+                        <div><strong class="text-slate-800">智能适配</strong><p class="text-slate-500 mt-0.5">系统会根据你的生存阶段，自动适配评分逻辑。</p></div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-sm mt-0.5">🤝</span> 
+                        <div><strong class="text-slate-800">诚实原则</strong><p class="text-slate-500 mt-0.5">请根据当前真实业务现状作答，而非“未来计划”。</p></div>
+                    </li>
+                </ul>
             </div>
 
-            <!-- 2. 答题页 -->
-            <div id="quizPage" class="hidden flex-col h-full p-6 md:p-10 fade-in pt-20">
-                <div class="mb-6">
-                    <div class="flex justify-between items-center mb-6 font-sans-ui">
+            <button onclick="checkCodeAndStart()" class="btn-primary font-bold py-4 w-full rounded-xl text-lg shadow-lg hover:shadow-xl transform transition-all font-sans-ui tracking-wide">
+                开始深度扫描
+            </button>
+            
+            <div class="mt-8 text-[10px] text-slate-300 font-sans-ui">
+                © 安清酉 · 版权所有
+            </div>
+        </div>
+
+        <!-- 2. 答题页 -->
+        <div id="quizPage" class="hidden flex-col h-full relative">
+            <!-- 题目区域 (可滚动) -->
+            <div class="scrollable-content p-6 md:p-8">
+                <div class="mb-4 pt-4">
+                    <div class="flex justify-between items-center mb-4 font-sans-ui">
                         <span id="sectionTag" class="text-[10px] font-bold tracking-wider uppercase bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full border border-indigo-100">生存扫描</span>
                         <span class="text-xs text-slate-400 font-bold tracking-widest"><span id="currQ">1</span> / <span id="totalQ">50</span></span>
                     </div>
-                    <h2 id="questionText" class="text-2xl md:text-3xl font-bold text-indigo-950 leading-snug min-h-[6rem] flex items-center">...</h2>
+                    <h2 id="questionText" class="text-xl md:text-2xl font-bold text-indigo-950 leading-snug min-h-[4rem] flex items-center">...</h2>
                 </div>
-                <div id="optionsBox" class="flex-1 space-y-3 overflow-y-auto pb-6 pr-1 scrollbar-hide font-sans-ui"></div>
-                <div class="mt-auto pt-6 border-t border-slate-50 flex justify-between items-center font-sans-ui">
-                    <button onclick="prevQuestion()" id="prevBtn" class="text-slate-400 hover:text-slate-600 text-xs font-bold px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors hidden">← 上一题</button>
-                    <button onclick="nextQuestion()" id="nextBtn" disabled class="btn-primary py-3 px-10 rounded-xl font-bold text-sm ml-auto shadow-lg">下一题</button>
-                </div>
+                <div id="optionsBox" class="space-y-3 font-sans-ui pb-20"></div>
             </div>
 
-            <!-- 2.5 中途插页 -->
-            <div id="interstitialPage" class="hidden flex-col justify-center items-center h-full p-8 text-center fade-in bg-slate-50">
-                <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 text-4xl shadow-md border border-slate-100">🔒</div>
-                <h3 class="text-2xl font-bold text-indigo-950 mb-4">已开启「0-1 聚焦模式」</h3>
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 max-w-sm text-left mb-8">
-                    <p class="text-sm text-slate-600 leading-relaxed text-justify">
-                        为了确保诊断精准，本次测评将<strong>暂不涉及</strong>「系统力」与「交付力」等扩张期维度。<br><br>
-                        请放心，当你跑通最小闭环（MVP）并实现稳定盈利后，再次测评即可自动解锁全维视角，本次我们共同聚焦当下最关键的破局点。
-                    </p>
-                </div>
-                <button onclick="resumeQuiz()" class="btn-primary py-3 px-12 rounded-xl font-bold text-sm shadow-lg font-sans-ui">我明白了，继续答题</button>
+            <!-- 底部按钮 (固定) -->
+            <div class="absolute bottom-0 left-0 w-full p-4 bg-white/95 backdrop-blur-sm border-t border-slate-50 flex justify-between items-center font-sans-ui z-10">
+                <button onclick="prevQuestion()" id="prevBtn" class="text-slate-400 hover:text-slate-600 text-xs font-bold px-4 py-2 rounded-lg transition-colors hidden">← 上一题</button>
+                <button onclick="nextQuestion()" id="nextBtn" disabled class="btn-primary py-3 px-8 rounded-xl font-bold text-sm ml-auto shadow-lg">下一题</button>
             </div>
+        </div>
 
-            <!-- 3. 结果页 -->
-            <div id="resultPage" class="hidden absolute inset-0 bg-white z-30 overflow-y-auto flex-col slide-up">
+        <!-- 2.5 中途插页 -->
+        <div id="interstitialPage" class="hidden flex-col justify-center items-center h-full p-8 text-center fade-in bg-slate-50">
+            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 text-3xl shadow-md border border-slate-100">🔒</div>
+            <h3 class="text-xl font-bold text-indigo-950 mb-4">已开启「0-1 聚焦模式」</h3>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 w-full text-left mb-8">
+                <p class="text-sm text-slate-600 leading-relaxed text-justify">
+                    为了确保诊断精准，本次测评将<strong>暂不涉及</strong>「系统力」与「交付力」等扩张期维度。<br><br>
+                    请放心，当你跑通最小闭环（MVP）并实现稳定盈利后，再次测评即可自动解锁全维视角。
+                </p>
+            </div>
+            <button onclick="resumeQuiz()" class="btn-primary py-3 px-10 rounded-xl font-bold text-sm shadow-lg font-sans-ui">继续答题</button>
+        </div>
+
+        <!-- 3. 结果页 -->
+        <div id="resultPage" class="hidden h-full w-full bg-white z-30 flex-col overflow-hidden">
+            <div class="scrollable-content">
                 <!-- 头部卡片 -->
-                <div class="bg-[#0f172a] text-white p-8 md:p-10 relative overflow-hidden shrink-0">
-                    <div class="absolute top-0 right-0 w-80 h-80 bg-indigo-600 rounded-full blur-[100px] opacity-20 translate-x-20 -translate-y-20"></div>
-                    <div class="absolute bottom-0 left-0 w-60 h-60 bg-teal-600 rounded-full blur-[80px] opacity-10 -translate-x-10 translate-y-10"></div>
+                <div class="bg-[#0f172a] text-white p-6 md:p-8 relative overflow-hidden shrink-0">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-600 rounded-full blur-[80px] opacity-20 translate-x-10 -translate-y-10"></div>
                     
-                    <div class="relative z-10 pt-6">
-                        <div class="flex justify-between items-start mb-8">
+                    <div class="relative z-10 pt-4">
+                        <div class="flex justify-between items-start mb-6">
                             <div class="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold border border-slate-700 px-3 py-1.5 rounded-full bg-slate-800/50 font-sans-ui">当前商业画像</div>
                             <div class="text-right">
                                 <div class="flex items-baseline justify-end gap-1 font-sans-ui">
-                                    <span class="text-6xl font-black text-white tracking-tighter" id="userScoreVal">0</span>
-                                    <span class="text-xl text-slate-400 font-medium">/100</span>
+                                    <span class="text-5xl font-black text-white tracking-tighter" id="userScoreVal">0</span>
+                                    <span class="text-sm text-slate-400 font-medium">/100</span>
                                 </div>
                                 <div class="text-[10px] text-slate-400 font-medium font-sans-ui mt-1">商业健康总分</div>
                             </div>
                         </div>
-                        <h2 id="resultTitle" class="text-4xl md:text-5xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 tracking-tight">...</h2>
-                        <p id="resultDesc" class="text-sm md:text-base text-slate-300 max-w-lg leading-relaxed opacity-90 font-light italic border-l-2 border-indigo-500 pl-4">...</p>
+                        <h2 id="resultTitle" class="text-3xl md:text-4xl font-black mb-3 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 tracking-tight">...</h2>
+                        <p id="resultDesc" class="text-xs md:text-sm text-slate-300 leading-relaxed opacity-90 font-light italic border-l-2 border-indigo-500 pl-3">...</p>
                     </div>
                 </div>
 
-                <div class="p-6 md:p-10 space-y-12 pb-24">
+                <div class="p-6 space-y-8 pb-24">
                     <!-- 1. 核心图表 -->
-                    <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm">
-                        <h3 class="font-bold text-slate-400 text-xs uppercase tracking-widest mb-6 text-center font-sans-ui">一人公司 · 六维能力雷达</h3>
-                        <div class="h-64 w-full relative flex justify-center">
+                    <div class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm">
+                        <h3 class="font-bold text-slate-400 text-[10px] uppercase tracking-widest mb-4 text-center font-sans-ui">一人公司 · 六维能力雷达</h3>
+                        <div class="h-60 w-full relative flex justify-center">
                             <canvas id="radarChart"></canvas>
                         </div>
                     </div>
 
-                    <!-- 2. 维度得分详情 -->
+                    <!-- 2. 维度定义与得分 -->
                     <div>
-                        <h3 class="font-bold text-slate-900 text-sm mb-6 flex items-center gap-2 uppercase tracking-wide font-sans-ui"><span class="text-lg">📊</span> 六维能力模型得分</h3>
-                        <div id="scoreCards" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
+                        <h3 class="font-bold text-slate-900 text-sm mb-4 flex items-center gap-2 uppercase tracking-wide font-sans-ui"><span class="text-base">📊</span> 能力模型详解</h3>
+                        <div id="scoreCards" class="grid grid-cols-2 gap-3"></div>
                     </div>
 
                     <!-- 3. 深度诊断分析 -->
-                    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-8">
-                        <h3 class="font-bold text-slate-900 text-sm mb-6 flex items-center gap-2 uppercase tracking-wide font-sans-ui"><span class="text-lg">🩺</span> 深度诊断分析</h3>
-                        <div id="diagnosisText" class="text-sm text-slate-700 leading-8 space-y-6 text-justify"></div>
+                    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-6">
+                        <h3 class="font-bold text-slate-900 text-sm mb-4 flex items-center gap-2 uppercase tracking-wide font-sans-ui"><span class="text-base">🩺</span> 深度诊断分析</h3>
+                        <div id="diagnosisText" class="text-sm text-slate-700 leading-7 space-y-4 text-justify"></div>
                     </div>
 
                     <!-- 4. 关键行动 -->
-                    <div class="bg-[#f0f9ff] border border-sky-100 rounded-2xl p-8 relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-sky-200 rounded-full blur-3xl opacity-30"></div>
-                        <h3 class="font-bold text-sky-900 text-sm mb-6 flex items-center gap-2 uppercase tracking-wide relative z-10 font-sans-ui"><span class="w-1.5 h-4 bg-sky-600 rounded-full"></span> 下一步关键行动</h3>
-                        <div id="actionPlan" class="space-y-6 relative z-10"></div>
+                    <div class="bg-[#f0f9ff] border border-sky-100 rounded-2xl p-6 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-sky-200 rounded-full blur-2xl opacity-30"></div>
+                        <h3 class="font-bold text-sky-900 text-sm mb-4 flex items-center gap-2 uppercase tracking-wide relative z-10 font-sans-ui"><span class="w-1 h-3 bg-sky-600 rounded-full"></span> 下一步关键行动</h3>
+                        <div id="actionPlan" class="space-y-4 relative z-10"></div>
                     </div>
 
                     <!-- 底部操作 -->
-                    <div class="flex flex-col gap-3 pt-8 border-t border-slate-100 font-sans-ui mt-8">
+                    <div class="flex flex-col gap-3 pt-6 border-t border-slate-100 font-sans-ui mt-4">
                         <button onclick="downloadCard()" class="w-full py-4 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 text-sm transition-colors shadow-lg flex items-center justify-center gap-2">
-                            <span>📥</span> 下载诊断卡片 (含雷达图)
+                            <span>📥</span> 保存完整诊断报告 (图片)
                         </button>
                         <button onclick="location.reload()" class="w-full py-3 text-slate-400 font-bold rounded-xl hover:text-slate-600 text-xs transition-colors">
                             重新测试
@@ -186,42 +216,42 @@
 
     <!-- 4. 分析中弹窗 -->
     <div id="analyzingModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-white/90 backdrop-blur-sm fade-in font-sans-ui">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl flex flex-col items-center text-center max-w-sm mx-4 border border-slate-100">
-            <div class="w-12 h-12 border-4 border-slate-100 border-t-indigo-900 rounded-full animate-spin mb-6"></div>
-            <h3 class="text-lg font-bold text-slate-800 mb-2">正在生成画像...</h3>
-            <p class="text-xs text-slate-500" id="loadingText">分析商业模型...</p>
+        <div class="bg-white p-8 rounded-2xl shadow-2xl flex flex-col items-center text-center w-64 border border-slate-100">
+            <div class="w-10 h-10 border-4 border-slate-100 border-t-indigo-900 rounded-full animate-spin mb-4"></div>
+            <h3 class="text-base font-bold text-slate-800 mb-1">正在生成画像...</h3>
+            <p class="text-[10px] text-slate-500" id="loadingText">分析商业模型...</p>
         </div>
     </div>
 
-    <!-- 5. 兑换码解锁弹窗 (前置) -->
-    <div id="unlockModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center bg-slate-900/80 backdrop-blur-sm fade-in font-sans-ui">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-sm mx-4 relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
+    <!-- 5. 兑换码解锁弹窗 -->
+    <div id="unlockModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center bg-slate-900/80 backdrop-blur-sm fade-in font-sans-ui p-4">
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-2xl w-full max-w-sm relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
             <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">🔑</div>
-                <h3 class="text-xl font-bold text-slate-900">开启商业诊断</h3>
-                <p class="text-sm text-slate-500 mt-2">本测评为付费内容。<br>请输入您的专属兑换码以开始答题。</p>
+                <div class="w-14 h-14 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">🔑</div>
+                <h3 class="text-lg font-bold text-slate-900">开启商业诊断</h3>
+                <p class="text-xs text-slate-500 mt-2">本测评为付费内容。<br>请输入您的专属兑换码以开始答题。</p>
             </div>
             
             <div class="space-y-4">
                 <div>
-                    <input type="text" id="redeemCodeInput" placeholder="请输入兑换码" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-center text-lg font-bold tracking-widest uppercase placeholder:text-sm placeholder:font-normal placeholder:tracking-normal">
+                    <input type="text" id="redeemCodeInput" placeholder="请输入兑换码" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-center text-base font-bold tracking-widest uppercase placeholder:text-sm placeholder:font-normal placeholder:tracking-normal appearance-none">
                     <p id="redeemError" class="text-xs text-red-500 text-center mt-2 hidden">兑换码无效，请检查后重试</p>
                 </div>
-                <button onclick="verifyCode()" class="w-full py-3 bg-indigo-900 text-white font-bold rounded-xl hover:bg-indigo-800 transition-colors shadow-lg">
+                <button onclick="verifyCode()" class="w-full py-3 bg-indigo-900 text-white font-bold rounded-xl hover:bg-indigo-800 transition-colors shadow-lg text-sm">
                     立即验证并开始
                 </button>
             </div>
             
             <div class="mt-6 text-center border-t border-slate-100 pt-4">
-                <p class="text-xs text-slate-400">还没有兑换码？<a href="#" class="text-indigo-600 hover:underline font-bold">点击获取</a></p>
+                <!-- 链接已更新 -->
+                <p class="text-xs text-slate-400">还没有兑换码？<a href="https://xhslink.com/m/9zlRIGza06v" target="_blank" class="text-indigo-600 hover:underline font-bold">点击获取</a></p>
             </div>
         </div>
     </div>
 
     <script>
         // --- 兑换码配置 ---
-        // 已植入你提供的100个兑换码
         const VALID_CODES = [
             "Z739-RTVR", "QYFB-8D7X", "QVKW-TYAW", "Z3S5-KNHF", "4F2M-XC67", "F7FN-GHNJ", "HF5C-6J5J", "DU9C-PGWW", "JCF3-JDVZ", "WQHP-HP2J",
             "TB58-UWBT", "F7JS-RQR8", "38AT-DMU5", "767N-8XCE", "M9D9-RT53", "GGQL-4PFC", "SGXH-YZD8", "JX7V-ZFWH", "3CQM-79S6", "TFSF-A769",
@@ -235,10 +265,19 @@
             "4VTP-X8GD", "J2KG-WY3Z", "9E5M-29NL", "AWEH-FHKC", "6XGF-2ED7", "R98U-DDF5", "LLDJ-FUAG", "GGDL-PBSA", "2WUR-5Y7T", "X986-DVUJ"
         ];
 
-        // 检查本地存储
         let isUnlocked = localStorage.getItem('isUnlocked') === 'true';
 
         // --- 核心逻辑 ---
+        
+        // 维度定义字典
+        const DIMENSION_DEFS = {
+            "定位力": "差异化与生态位选择",
+            "产品力": "解决问题的交付方案",
+            "吸引力": "流量获取与内容能力",
+            "转化力": "信任构建与成交效率",
+            "交付力": "客户体验与复购机制",
+            "系统力": "效率杠杆与抗风险力"
+        };
 
         const questions = [
             { section: "生存扫描", type: "choice", text: "除去工资，你目前的“一人公司/副业”收入状况是？", options: ["几乎没有，还在投入期", "偶尔有，但不稳定", "稳定，但还没超过主业工资", "稳定，且已超过主业工资"] },
@@ -297,6 +336,7 @@
         let answers = new Array(questions.length).fill(null);
         let isSurvivalMode = false;
         const dimensions = ["定位力", "产品力", "吸引力", "转化力", "交付力", "系统力"];
+        let finalScoresForDownload = []; // 用于下载的数据
 
         document.getElementById('totalQ').innerText = questions.length;
 
@@ -315,20 +355,17 @@
             const errorMsg = document.getElementById('redeemError');
             
             if (VALID_CODES.includes(input)) {
-                // 验证成功
                 isUnlocked = true;
                 localStorage.setItem('isUnlocked', 'true');
                 document.getElementById('unlockModal').classList.add('hidden');
                 startQuiz();
             } else {
-                // 验证失败
                 errorMsg.classList.remove('hidden');
                 document.getElementById('redeemCodeInput').classList.add('border-red-500');
                 document.getElementById('redeemCodeInput').classList.add('text-red-500');
             }
         }
 
-        // 监听输入框回车
         document.getElementById('redeemCodeInput').addEventListener('focus', function() {
             document.getElementById('redeemError').classList.add('hidden');
             this.classList.remove('border-red-500');
@@ -383,7 +420,7 @@
             } else {
                 q.options.forEach((opt, idx) => {
                     const btn = document.createElement('button');
-                    btn.className = `option-card w-full text-left p-5 rounded-xl text-sm font-medium bg-white ${answers[currentIdx] === idx ? 'selected' : 'border-slate-200 text-slate-600'}`;
+                    btn.className = `option-card w-full text-left p-4 md:p-5 rounded-xl text-sm font-medium bg-white ${answers[currentIdx] === idx ? 'selected' : 'border-slate-200 text-slate-600'}`;
                     btn.innerText = opt;
                     btn.onclick = () => selectAnswer(idx);
                     box.appendChild(btn);
@@ -474,7 +511,8 @@
 
         // --- 结果展示逻辑 ---
 
-        let finalHealthIndex = 0; // 存储总分用于生成图片
+        let finalHealthIndex = 0;
+        let finalTitle = "";
 
         function showResult() {
             calculateAndRender();
@@ -494,12 +532,16 @@
                 }
             });
             let finalScores = dimScores.map((s, i) => dimCounts[i] ? Math.round((s / dimCounts[i]) * 20) : 0);
+            finalScoresForDownload = finalScores; // 保存供下载使用
+
             let validDims = isSurvivalMode ? 4 : 6;
             let totalScore = 0;
             for(let i=0; i<validDims; i++) totalScore += finalScores[i];
-            finalHealthIndex = Math.round(totalScore / validDims); // 更新全局变量
+            finalHealthIndex = Math.round(totalScore / validDims);
             
             const diagnosis = getDiagnosis(finalScores, finalHealthIndex, isSurvivalMode);
+            finalTitle = diagnosis.title;
+
             document.getElementById('resultTitle').innerText = diagnosis.title;
             document.getElementById('resultDesc').innerText = diagnosis.desc;
             document.getElementById('userScoreVal').innerText = finalHealthIndex;
@@ -512,19 +554,27 @@
         function renderScoreCards(scores, isSurvival) {
             const container = document.getElementById('scoreCards');
             container.innerHTML = '';
-            const dimNames = ["定位力", "产品力", "吸引力", "转化力", "交付力", "系统力"];
-            dimNames.forEach((name, idx) => {
+            dimensions.forEach((name, idx) => {
                 const card = document.createElement('div');
                 const isLocked = isSurvival && (idx === 4 || idx === 5);
+                const desc = DIMENSION_DEFS[name]; // 获取定义
+                
                 if (isLocked) {
-                    card.className = "bg-slate-50 border border-slate-100 rounded-xl p-4 flex flex-col items-center justify-center text-center opacity-60";
-                    card.innerHTML = `<div class="text-xl mb-2 text-slate-300">🔒</div><div class="text-xs font-bold text-slate-400 font-sans-ui">${name}</div><div class="text-[10px] text-slate-400 mt-2 font-sans-ui bg-slate-100 px-2 py-0.5 rounded">进阶后自动解锁</div>`;
+                    card.className = "bg-slate-50 border border-slate-100 rounded-lg p-3 flex flex-col items-center justify-center text-center opacity-60";
+                    card.innerHTML = `<div class="text-lg mb-1 text-slate-300">🔒</div><div class="text-xs font-bold text-slate-400 font-sans-ui">${name}</div>`;
                 } else {
                     const score = scores[idx];
                     let colorClass = score >= 80 ? "text-emerald-600" : (score >= 60 ? "text-indigo-600" : "text-amber-600");
-                    let barColor = score >= 80 ? "bg-emerald-500" : (score >= 60 ? "bg-indigo-500" : "bg-amber-500");
-                    card.className = "bg-white border border-slate-100 rounded-xl p-4 shadow-sm flex flex-col justify-between h-28 relative overflow-hidden";
-                    card.innerHTML = `<div class="flex justify-between items-start z-10"><span class="text-xs text-slate-500 font-bold font-sans-ui">${name}</span></div><div class="text-3xl font-black ${colorClass} z-10 mt-1 font-sans-ui">${score}</div><div class="w-full bg-slate-100 h-1.5 rounded-full mt-auto z-10 overflow-hidden"><div class="h-full ${barColor}" style="width: ${score}%"></div></div>`;
+                    card.className = "bg-white border border-slate-100 rounded-lg p-3 shadow-sm flex flex-col justify-between";
+                    card.innerHTML = `
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs text-slate-600 font-bold font-sans-ui">${name}</span>
+                                <span class="text-sm font-black ${colorClass} font-sans-ui">${score}</span>
+                            </div>
+                            <div class="text-[10px] text-slate-400 leading-tight font-sans-ui scale-90 origin-top-left">${desc}</div>
+                        </div>
+                    `;
                 }
                 container.appendChild(card);
             });
@@ -549,7 +599,6 @@
             const chartData = isSurvivalMode ? [...data.slice(0,4), 0, 0] : data;
             if (radarChart) radarChart.destroy();
             
-            // 为了生成图片更好看，调整一下图表配置
             radarChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
@@ -559,12 +608,12 @@
                         data: chartData,
                         backgroundColor: 'rgba(30, 58, 138, 0.15)',
                         borderColor: '#1e3a8a',
-                        borderWidth: 3,
+                        borderWidth: 2,
                         pointBackgroundColor: '#fff',
                         pointBorderColor: '#1e3a8a',
                         pointHoverBackgroundColor: '#1e3a8a',
                         pointHoverBorderColor: '#fff',
-                        pointRadius: 4
+                        pointRadius: 3
                     }]
                 },
                 options: {
@@ -573,8 +622,8 @@
                             angleLines: { color: '#e2e8f0' },
                             grid: { color: '#e2e8f0' },
                             pointLabels: { 
-                                font: { size: 12, family: "'PingFang SC', sans-serif", weight: 'bold' }, 
-                                color: '#475569' 
+                                font: { size: 10, family: "'PingFang SC', sans-serif", weight: 'bold' }, 
+                                color: '#64748b' 
                             },
                             suggestedMin: 0,
                             suggestedMax: 20,
@@ -583,80 +632,106 @@
                     },
                     plugins: { legend: { display: false } },
                     maintainAspectRatio: false,
-                    animation: {
-                        onComplete: function() {
-                            // 动画完成后才能生成图片，这里不做操作，但在download时有用
-                        }
-                    }
                 }
             });
         }
 
-        // --- 图片生成与下载逻辑 ---
+        // --- 增强版图片生成逻辑 ---
         
         function downloadCard() {
-            // 创建一个临时的 Canvas 用于绘制图片
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             
-            // 设置画布尺寸 (类似手机屏幕比例)
+            // 设定长图尺寸
             const width = 800;
-            const height = 1200;
+            const height = 1500; // 增加高度以容纳详情
             canvas.width = width;
             canvas.height = height;
 
             // 1. 绘制背景
-            ctx.fillStyle = '#f8fafc'; // 浅灰背景
+            ctx.fillStyle = '#f8fafc';
             ctx.fillRect(0, 0, width, height);
             
-            // 绘制顶部深色装饰块
-            ctx.fillStyle = '#1e3a8a';
-            ctx.fillRect(0, 0, width, 300);
+            // 顶部深色块
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, width, 380);
 
-            // 2. 绘制标题文字
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 40px "PingFang SC", sans-serif';
+            // 2. 绘制头部信息
             ctx.textAlign = 'center';
-            ctx.fillText('一人公司 · 商业体质诊断', width / 2, 100);
-
-            // 3. 绘制分数
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 120px "PingFang SC", sans-serif';
-            ctx.fillText(finalHealthIndex, width / 2, 220);
             
-            ctx.font = '24px "PingFang SC", sans-serif';
+            // 标题
             ctx.fillStyle = '#94a3b8';
-            ctx.fillText('商业健康指数', width / 2, 260);
+            ctx.font = 'bold 24px "PingFang SC", sans-serif';
+            ctx.fillText('一人公司 · 商业体质诊断', width / 2, 80);
 
-            // 4. 绘制白色卡片背景
+            // 分数
             ctx.fillStyle = '#ffffff';
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
-            ctx.shadowBlur = 20;
-            ctx.shadowOffsetY = 10;
-            ctx.fillRect(50, 350, width - 100, 700);
-            ctx.shadowColor = 'transparent'; // 重置阴影
+            ctx.font = 'bold 100px "PingFang SC", sans-serif';
+            ctx.fillText(finalHealthIndex, width / 2, 200);
+            
+            ctx.font = '20px "PingFang SC", sans-serif';
+            ctx.fillStyle = '#64748b';
+            ctx.fillText('商业健康总分', width / 2, 240);
 
-            // 5. 绘制雷达图
-            // 从 Chart.js 实例获取 Base64 图片
+            // 诊断称号
+            ctx.font = 'bold 48px "PingFang SC", sans-serif';
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText(finalTitle, width / 2, 320);
+
+            // 3. 绘制雷达图
             const chartImgUrl = radarChart.toBase64Image();
             const chartImg = new Image();
             chartImg.onload = function() {
-                // 将雷达图绘制到 Canvas 上
-                ctx.drawImage(chartImg, 100, 400, 600, 600);
+                // 白色卡片背景
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.05)';
+                ctx.shadowBlur = 20;
+                ctx.shadowOffsetY = 10;
+                ctx.fillRect(50, 420, width - 100, 950);
+                ctx.shadowColor = 'transparent';
 
-                // 6. 绘制底部版权信息
-                ctx.fillStyle = '#64748b';
-                ctx.font = 'bold 24px "PingFang SC", sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('© 安清酉', width / 2, 1100);
+                // 绘制雷达图
+                ctx.drawImage(chartImg, 150, 450, 500, 500);
+
+                // 4. 绘制六维能力详情表
+                let startY = 980;
+                const colWidth = 320;
+                const rowHeight = 80;
                 
-                ctx.fillStyle = '#94a3b8';
-                ctx.font = '18px "PingFang SC", sans-serif';
-                ctx.fillText('关注获取更多一人公司实战干货', width / 2, 1140);
+                ctx.textAlign = 'left';
+                
+                dimensions.forEach((dim, idx) => {
+                    const x = idx % 2 === 0 ? 80 : 420;
+                    const y = startY + Math.floor(idx / 2) * rowHeight;
+                    const score = finalScoresForDownload[idx];
+                    const def = DIMENSION_DEFS[dim];
 
-                // 7. 触发下载
+                    // 维度名
+                    ctx.fillStyle = '#64748b';
+                    ctx.font = 'bold 20px "PingFang SC", sans-serif';
+                    ctx.fillText(dim, x, y);
+
+                    // 分数
+                    let scoreColor = score >= 80 ? '#059669' : (score >= 60 ? '#4f46e5' : '#d97706');
+                    ctx.fillStyle = scoreColor;
+                    ctx.font = 'bold 24px "PingFang SC", sans-serif';
+                    ctx.fillText(score + '分', x + 80, y);
+
+                    // 定义解释
+                    ctx.fillStyle = '#94a3b8';
+                    ctx.font = '16px "PingFang SC", sans-serif';
+                    ctx.fillText(def, x, y + 30);
+                });
+
+                // 5. 底部版权
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#cbd5e1';
+                ctx.font = '18px "PingFang SC", sans-serif';
+                ctx.fillText('© 安清酉 · 商业体质诊断', width / 2, 1420);
+
+                // 触发下载
                 const link = document.createElement('a');
-                link.download = `商业体质诊断_${finalHealthIndex}分_@安清酉.png`;
+                link.download = `商业诊断_${finalTitle}_${finalHealthIndex}分.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             };
