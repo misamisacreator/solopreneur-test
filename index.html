@@ -44,7 +44,7 @@
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* 核心容器适配：使用 dvh 适配移动端浏览器地址栏 */
+        /* 核心容器适配 */
         #app-container {
             height: 100dvh; 
             width: 100%;
@@ -92,7 +92,11 @@
                     </li>
                     <li class="flex items-start gap-3">
                         <span class="text-sm mt-0.5">🧠</span> 
-                        <div><strong class="text-slate-800">智能适配</strong><p class="text-slate-500 mt-0.5">系统会根据你的生存阶段，自动适配评分逻辑。</p></div>
+                        <div><strong class="text-slate-800">智能适配</strong><p class="text-slate-500 mt-0.5">系统会根据你的生存阶段，自动适配评分逻辑，确保诊断精准。</p></div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-sm mt-0.5">🤝</span> 
+                        <div><strong class="text-slate-800">诚实原则</strong><p class="text-slate-500 mt-0.5">请根据当前真实业务现状作答，而非“未来计划”。</p></div>
                     </li>
                 </ul>
             </div>
@@ -149,7 +153,7 @@
                         <div class="flex justify-between items-start mb-6">
                             <div class="flex gap-2">
                                 <div class="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold border border-slate-700 px-3 py-1.5 rounded-full bg-slate-800/50 font-sans-ui">当前商业画像</div>
-                                <!-- 新增：阶段标签 -->
+                                <!-- 阶段标签 -->
                                 <div id="stageLabel" class="text-[10px] uppercase tracking-wider text-white font-bold px-3 py-1.5 rounded-full bg-indigo-600 font-sans-ui hidden">起步期 (0-1)</div>
                             </div>
                             <div class="text-right">
@@ -173,7 +177,7 @@
                         </div>
                     </div>
 
-                    <!-- 2. 维度定义与得分 (修改文案) -->
+                    <!-- 2. 维度定义与得分 -->
                     <div>
                         <h3 class="font-bold text-slate-900 text-sm mb-4 flex items-center gap-2 uppercase tracking-wide font-sans-ui"><span class="text-base">📊</span> 六维能力得分</h3>
                         <div id="scoreCards" class="grid grid-cols-2 gap-3"></div>
@@ -192,10 +196,41 @@
                         <div id="actionPlan" class="space-y-4 relative z-10"></div>
                     </div>
 
+                    <!-- 5. 附录：定义 (新增) -->
+                    <div class="border-t border-slate-100 pt-8">
+                        <h3 class="font-bold text-slate-900 text-sm mb-6 uppercase tracking-wide font-sans-ui text-center">附录：一人公司 · 六维增长模型定义</h3>
+                        <div class="space-y-5 font-sans-ui">
+                            <div>
+                                <h4 class="text-xs font-bold text-indigo-900 mb-1">1. 定位力</h4>
+                                <p class="text-xs text-slate-500 leading-relaxed">你在市场生态中的生态位。决定了你是谁，服务谁，以及你能切走多大的蛋糕。</p>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-indigo-900 mb-1">2. 产品力</h4>
+                                <p class="text-xs text-slate-500 leading-relaxed">你交付价值的载体。不仅指产品本身，还包括定价结构和解决方案的完整性。</p>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-indigo-900 mb-1">3. 吸引力</h4>
+                                <p class="text-xs text-slate-500 leading-relaxed">让陌生人发现你的能力。即流量获取、内容传播和品牌曝光的效率。</p>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-indigo-900 mb-1">4. 转化力</h4>
+                                <p class="text-xs text-slate-500 leading-relaxed">让流量变成现金的能力。涉及信任建立、销售话术和临门一脚的成交设计。</p>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-indigo-900 mb-1">5. 交付力</h4>
+                                <p class="text-xs text-slate-500 leading-relaxed">兑现承诺并制造惊喜的能力。决定了口碑、复购和客户生命周期价值。</p>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-indigo-900 mb-1">6. 系统力</h4>
+                                <p class="text-xs text-slate-500 leading-relaxed">让业务脱离你个人时间运转的能力。包括流程SOP、工具自动化和财务健康度。</p>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- 底部操作 -->
                     <div class="flex flex-col gap-3 pt-6 border-t border-slate-100 font-sans-ui mt-4">
                         <button onclick="downloadCard()" class="w-full py-4 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 text-sm transition-colors shadow-lg flex items-center justify-center gap-2">
-                            <span>📥</span> 保存完整诊断报告 (图片)
+                            <span>📥</span> 生成完整诊断报告 (图片)
                         </button>
                         <button onclick="location.reload()" class="w-full py-3 text-slate-400 font-bold rounded-xl hover:text-slate-600 text-xs transition-colors">
                             重新测试
@@ -241,6 +276,19 @@
             <div class="mt-6 text-center border-t border-slate-100 pt-4">
                 <p class="text-xs text-slate-400">还没有兑换码？<a href="https://xhslink.com/m/9zlRIGza06v" target="_blank" class="text-indigo-600 hover:underline font-bold">点击获取</a></p>
             </div>
+        </div>
+    </div>
+
+    <!-- 6. 图片生成展示弹窗 (新增) -->
+    <div id="imageModal" class="fixed inset-0 z-[70] hidden flex flex-col items-center justify-center bg-slate-900/95 backdrop-blur-sm fade-in font-sans-ui p-4">
+        <div class="relative w-full max-w-md bg-transparent flex flex-col items-center">
+            <div class="bg-white rounded-xl p-2 shadow-2xl overflow-hidden max-h-[80vh] overflow-y-auto mb-4 w-full">
+                <img id="generatedImage" src="" alt="诊断报告" class="w-full h-auto rounded-lg block">
+            </div>
+            <p class="text-white text-sm font-bold animate-pulse mb-4">👆 长按上方图片即可保存到相册</p>
+            <button onclick="closeImageModal()" class="bg-white/10 text-white px-6 py-2 rounded-full text-sm hover:bg-white/20 transition-colors border border-white/20">
+                关闭
+            </button>
         </div>
     </div>
 
@@ -560,7 +608,8 @@
                 
                 if (isLocked) {
                     card.className = "bg-slate-50 border border-slate-100 rounded-lg p-3 flex flex-col items-center justify-center text-center opacity-60";
-                    card.innerHTML = `<div class="text-lg mb-1 text-slate-300">🔒</div><div class="text-xs font-bold text-slate-400 font-sans-ui">${name}</div>`;
+                    // 修改点：增加“进阶后自动解锁”
+                    card.innerHTML = `<div class="text-lg mb-1 text-slate-300">🔒</div><div class="text-xs font-bold text-slate-400 font-sans-ui">${name}</div><div class="text-[10px] text-slate-400 mt-1 scale-90">进阶后自动解锁</div>`;
                 } else {
                     const score = scores[idx];
                     let colorClass = score >= 80 ? "text-emerald-600" : (score >= 60 ? "text-indigo-600" : "text-amber-600");
@@ -598,6 +647,9 @@
             const chartData = isSurvivalMode ? [...data.slice(0,4), 0, 0] : data;
             if (radarChart) radarChart.destroy();
             
+            // 修改点：显式设置字体，防止挤压
+            Chart.defaults.font.family = "'PingFang SC', 'Microsoft YaHei', sans-serif";
+            
             radarChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
@@ -621,7 +673,7 @@
                             angleLines: { color: '#e2e8f0' },
                             grid: { color: '#e2e8f0' },
                             pointLabels: { 
-                                font: { size: 10, family: "'PingFang SC', sans-serif", weight: 'bold' }, 
+                                font: { size: 11, weight: 'bold' }, // 稍微调大字体
                                 color: '#64748b' 
                             },
                             suggestedMin: 0,
@@ -635,7 +687,7 @@
             });
         }
 
-        // --- 增强版图片生成逻辑 (重构布局) ---
+        // --- 增强版图片生成逻辑 (重构布局 + 弹窗展示) ---
         
         function downloadCard() {
             const canvas = document.createElement('canvas');
@@ -690,7 +742,7 @@
             const chartImgUrl = radarChart.toBase64Image();
             const chartImg = new Image();
             chartImg.onload = function() {
-                // 绘制雷达图 (居中)
+                // 绘制雷达图 (居中) - 修改点：确保宽高比为 1:1 避免挤压
                 ctx.drawImage(chartImg, (width - 400)/2, 390, 400, 400);
 
                 // 4. 绘制六维能力详情表 (2x3 对称网格)
@@ -744,13 +796,18 @@
                 ctx.font = '14px "PingFang SC", sans-serif';
                 ctx.fillText('© 安清酉 · 商业体质诊断系统', width / 2, 1300);
 
-                // 触发下载
-                const link = document.createElement('a');
-                link.download = `商业诊断_${finalTitle}_${finalHealthIndex}分.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
+                // 修改点：不直接下载，而是展示弹窗供用户长按保存
+                const dataUrl = canvas.toDataURL('image/png');
+                document.getElementById('generatedImage').src = dataUrl;
+                document.getElementById('imageModal').classList.remove('hidden');
+                document.getElementById('imageModal').classList.add('flex');
             };
             chartImg.src = chartImgUrl;
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+            document.getElementById('imageModal').classList.remove('flex');
         }
 
         // 辅助函数：绘制圆角矩形
